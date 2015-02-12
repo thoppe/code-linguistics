@@ -11,7 +11,7 @@ The hypothesis is that the keywords (when restricted to a single language) will 
 
 ## Roadmap:
 
-+ Get a large sampling of code from github (how do we systematically identify projects on github, is there a list?). See [here](gitpull/README.md) for more information.
++ Get a large sampling of code from github (how do we systematically identify projects on github, is there a list?). See [here](gitpull/) for more information.
 + Download the dataset and organize into a database.
 + Determine a list of keywords for all languages we are interested in.
 + Compute the word freq for the data.
