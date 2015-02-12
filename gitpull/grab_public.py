@@ -1,8 +1,9 @@
 ## Example code, not working yet.
-import requests, json, codecs, ast, glob, os
+import requests, json, codecs, ast, glob, os, time
 
 # https://api.github.com/repositories?since=364
 url = "https://api.github.com/repositories"
+rate_limit_api = "https://api.github.com/rate_limit"
 
 # Set a BASH environment variable for github access
 # https://help.github.com/articles/creating-an-access-token-for-command-line-use/
@@ -19,14 +20,6 @@ def parse_header_info(header):
     link = header["link"]
     next_link = [x for x in link.split(', ') if '"next"' in x][0]
     since  = next_link.split("since=")[1].split('>')[0]
-
-    remaining = header["x-ratelimit-remaining"]
-    print "Requests remaing", remaining
-
-    if not remaining:
-        print "Overload requests, exiting"
-        exit()
-        
 
     return int(since)
 
@@ -49,6 +42,19 @@ def grab_next_page():
     }
 
     print "Starting ", page
+
+    payload = {"access_token":oauth_token,}
+    R = requests.get(rate_limit_api,params=payload)
+    limit_js = ast.literal_eval(R.text)
+    remaining = limit_js["rate"]["remaining"]
+    print "Requests remaing", remaining
+
+    if not remaining:
+        print "Overload requests, exiting"
+        exit()
+
+    # Be nice
+    time.sleep(0.5)
 
     R = requests.get(url,params=payload)
     h = dict(R.headers)

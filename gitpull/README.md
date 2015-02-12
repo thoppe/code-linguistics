@@ -7,6 +7,7 @@ This requires using the API and dealing with [pagination](https://developer.gith
 
 The script `grab_public.py` works well enough to dump the public information, now it needs to be parsed.
 `grab_public.py` requires a oauth2 token as an environment variable `GITHUB_TOKEN`.
+For some reason, this fails when the `state>70000`...
 
 #### Pulling events
 
