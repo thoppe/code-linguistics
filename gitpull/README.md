@@ -2,14 +2,17 @@
 
 #### Pulling repo names
 
-Note that [there is a way](https://developer.github.com/v3/repos/#list-all-public-repositories) to pull all public repos. 
+We can [pull all public repos](https://developer.github.com/v3/repos/#list-all-public-repositories) with `grab_public.py`.
 This requires using the API and dealing with [pagination](https://developer.github.com/guides/traversing-with-pagination/) correctly.
+For `grab_public.py` to work, it requires a oauth2 token as an environment variable `GITHUB_TOKEN`.
 
-The script `grab_public.py` works well enough to dump the public information, now it needs to be parsed.
-`grab_public.py` requires a oauth2 token as an environment variable `GITHUB_TOKEN`.
-For some reason, this fails when the `state>70000`...
+#### Parsing repo names
 
-#### Pulling events
+Once all the repos names have been pulled, we extract only the most useful information: `id, full_name, description, fork` with `parse_public.py` and save it in a SQLite database `db/repo_names.db`.
+The next step is to download the header information for each of these repos keeping information like `created_at, updated_at, pushed_at, homepage, size, stargazers_count, watchers_count, language, has_issues, has_downloads, has_wiki, has_pages, forks_count, open_issues_count, forks, open_issues, watchers, default_branch, network_count, subscribers_count`.
+
+
+##### Pulling events (not needed?)
 
 There is a good primer on [pulling from github](https://www.githubarchive.org/).
 
