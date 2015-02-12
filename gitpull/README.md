@@ -8,9 +8,25 @@ For `grab_public.py` to work, it requires a oauth2 token as an environment varia
 
 #### Parsing repo names
 
-Once all the repos names have been pulled, we extract only the most useful information: `id, full_name, description, fork` with `parse_public.py` and save it in a SQLite database `db/repo_names.db`.
-The next step is to download the header information for each of these repos keeping information like `created_at, updated_at, pushed_at, homepage, size, stargazers_count, watchers_count, language, has_issues, has_downloads, has_wiki, has_pages, forks_count, open_issues_count, forks, open_issues, watchers, default_branch, network_count, subscribers_count`.
+Once all the repos names have been pulled, we extract only the most useful information: 
 
+    id, full_name, description, fork
+
+with `parse_public.py` and save it in a SQLite database `db/repo_info.db`.
+
+#### Downloading full repo info
+
+The next step is to download the header information for each of these repos keeping the information: 
+
+    id, full_name, description, fork, created_at, updated_at, pushed_at, homepage, size, stargazers_count, watchers_count, language, has_issues, has_downloads, has_wiki, has_pages, forks_count, open_issues_count, forks, open_issues, watchers, default_branch, network_count, subscribers_count
+
+this is done with `grab_info.py`.
+
+#### Downloading the repo
+
+*IN PROGRESS.*
+
+Need to optimize this step to save time. Need to decide which repos to get (optimal order) and limit by size and language. Can we restrict to only main branch and certain files?
 
 ##### Pulling events (not needed?)
 
