@@ -1,0 +1,11 @@
+{
+    "python" : [".py"],
+    "javascript" : [".js"],
+    "java" : [".java"],
+    "css"  : [".css"],
+    "php" : [".php", ".phtml", ".php4", ".php3", ".php5", ".phps"],
+    "ruby" : [".rb", ".rbw"],
+    "c": [".cc", ".cpp", ".cxx", ".c", ".c++", 
+          ".h", ".hh", ".hpp", ".hxx", ".h++"],
+    "perl" : [".pl", ".pm", ".t", ".pod"]
+}

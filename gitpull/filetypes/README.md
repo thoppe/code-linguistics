@@ -1,3 +1,7 @@
+## Extensions
+
+The list of extensions known can be found in the file [`extensions.json`](extensions.json). This is incomplete, it needs to be updated.
+
 ## Languages
 
 Top 50 languages taken from [http://githut.info/](http://githut.info/).
@@ -54,5 +58,7 @@ Top 50 languages taken from [http://githut.info/](http://githut.info/).
 
 ## Wordfiles
 
-Wordfiles have been download [here](http://www.ultraedit.com/downloads/extras/wordfiles.html).
+Wordfiles have been download [here](http://www.ultraedit.com/downloads/extras/wordfiles.html) for some languages, this needs to be done for all languages of interest.
+
+These wordfiles then need to be converted to a json format for post-anaylsis.
 
