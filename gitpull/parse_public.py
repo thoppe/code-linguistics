@@ -1,4 +1,4 @@
-import glob, json, codecs, sqlite3, os
+import glob, json, codecs, sqlite3, os, itertools
 
 os.system("mkdir -p db")
 
@@ -54,15 +54,31 @@ def extract_info(repo):
     ''' Keeps a subset of information of the github dump '''
     return [repo[key] for key in add_keys]
 
+def content_file_iter(f):
+    print "Reading file", f
+
+    with codecs.open(f, 'r', 'utf-8') as FIN:
+        js = json.load(FIN)
+        for repo in js:
+            if repo["private"]:
+                print "Nothing should be private!"
+            yield extract_info(repo)
+
+def whole_content_file(f):
+    return list(content_file_iter(f))
+
 def content_iter():
-    for f in F_CONTENT:
-        print "Reading file", f
-        with codecs.open(f, 'r', 'utf-8') as FIN:
-            js = json.load(FIN)
-            for repo in js:
-                if repo["private"]:
-                    print "WHAT!?"
-                yield extract_info(repo)
+
+    import multiprocessing
+    P = multiprocessing.Pool(8)
+
+    #ITR = itertools.imap(whole_content_file, F_CONTENT)
+    ITR = P.imap(whole_content_file,F_CONTENT)
+
+    for repo_info in ITR:
+        for info in repo_info:
+            yield info
+
 
 
 
