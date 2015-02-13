@@ -19,9 +19,14 @@ WHERE created_at IS NULL AND fork=0
 LIMIT {}
 '''
 
-cmd_count = '''
+cmd_count_left = '''
 SELECT COUNT(*) FROM repo_info
 WHERE created_at IS NULL AND fork=0
+'''
+
+cmd_count_completed = '''
+SELECT COUNT(*) FROM repo_info
+WHERE created_at IS NOT NULL AND fork=0
 '''
 
 cmd_insert = '''
@@ -79,13 +84,16 @@ def info_grab_iter(limit=10):
         time.sleep(0.8)
 
 def get_items_left():
-    return conn.execute(cmd_count).next()[0]
+    return conn.execute(cmd_count_left).next()[0]
+
+def get_items_completed():
+    return conn.execute(cmd_count_completed).next()[0]
 
 while True:  
 
-    count = get_items_left()
-    print "Item remaining", count
-    if not count: break
+    vals = (get_items_completed(), get_items_left())
+    print "Item completed/remaining {}/{}".format(*vals)
+    if not vals[1]: break
 
     for info in info_grab_iter(limit=3):
         conn.execute(cmd_insert, info)
