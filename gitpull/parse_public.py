@@ -60,6 +60,8 @@ def content_iter():
         with codecs.open(f, 'r', 'utf-8') as FIN:
             js = json.load(FIN)
             for repo in js:
+                if repo["private"]:
+                    print "WHAT!?"
                 yield extract_info(repo)
 
 

@@ -53,17 +53,30 @@ def info_grab_iter(limit=10):
         h = dict(R.headers)
         js = json.loads(R.text)
 
-        vals = [js[key] for key in cols]
-        vals = [proper_date(x) if is_date else x 
-                for x,is_date in zip(vals, cols_dates)]
+        try:
+            vals = [js[key] for key in cols]
 
-        # For the WHERE clause
-        vals += [idx,]
+            vals = [proper_date(x) if is_date else x 
+                    for x,is_date in zip(vals, cols_dates)]
 
-        yield vals
+            # For the WHERE clause
+            vals += [idx,]
+            yield vals
+
+        except:
+            # For errors, use dummy info
+            print json.dumps(js)
+            null_date = datetime.datetime(2000,1,1)
+            print null_date
+            vals = [null_date if is_date else 0
+                    for x,is_date in zip(cols, cols_dates)]
+            vals[0] = idx
+            vals[1] = full_name
+            vals += [idx,]
+            yield vals
 
         # Be nice
-        time.sleep(2.0)
+        time.sleep(0.8)
 
 def get_items_left():
     return conn.execute(cmd_count).next()[0]
@@ -74,7 +87,7 @@ while True:
     print "Item remaining", count
     if not count: break
 
-    for info in info_grab_iter(limit=5):
+    for info in info_grab_iter(limit=3):
         conn.execute(cmd_insert, info)
     conn.commit()
 
