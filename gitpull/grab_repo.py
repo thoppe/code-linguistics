@@ -1,7 +1,6 @@
 import glob, json, sqlite3, os, json, string, hashlib, time
 from API_github import *
 import tempfile, collections
-import glob2 # Recursive globber
 
 # Storage for repos
 os.system("mkdir -p repos")
@@ -44,48 +43,9 @@ def download_repo_tar(full_name):
         # Be nice
         time.sleep(1.0) 
 
-'''
-def iter_repo(folder):
-    all_files = glob2.glob("{}/**/*".format(folder))
-    all_files_ext = ['.'+f.split('.')[-1][:10] for f in all_files]
-
-    for language in extensions:
-        for ext in extensions[language]:
-            for f,f_ext in zip(all_files,all_files_ext):
-                if f_ext == ext:
-                    yield (language, f)
-
-
-token_words = set(string.letters + string.digits + '_ \n')
-MAX_TOKEN_SIZE = 20
-
-def tokenize(f_code):
-
-    with open(f_code) as FIN: 
-        raw = FIN.read()
-
-    md5 = hashlib.md5(raw).hexdigest()
-
-    filtered = ''.join([x if x in token_words 
-                        else ' ' for x in raw]).split()
-    adjusted = [x.lower() for x in filtered if len(x)<20]
-    tokens = collections.Counter(adjusted) 
-
-    return md5,tokens
-'''     
 
 for (full_name,) in conn.execute(cmd_select):
     download_repo_tar(full_name)
-
-    # TOKENIZE IN A DIFFERENT PROGRAM
-
-    #for language, f_code in iter_repo(folder):
-    #    md5, tokens = tokenize(f_code)
-    #    print md5, tokens
-
-
-        
-
 
 
 
