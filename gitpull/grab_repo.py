@@ -6,7 +6,7 @@ import glob2 # Recursive globber
 # Storage for repos
 os.system("mkdir -p repos")
 
-cmd_grab = "curl -L https://api.github.com/repos/{full_name}/tarball > repos/{full_name}.tar.gz"
+cmd_grab = "curl -L https://api.github.com/repos/{full_name}/tarball?access_token={oauth_token} > repos/{full_name}.tar.gz"
 
 # Connect to the DB that has been through parse_public.py
 f_repo_info = "db/repo_info.db"
@@ -37,9 +37,10 @@ def download_repo_tar(full_name):
     if not os.path.exists(f_out):
         check_limits()
         print "DOWNLOADING: ", f_out
-        cmd = cmd_grab.format(full_name=full_name)
+        cmd = cmd_grab.format(full_name=full_name,
+                              oauth_token=oauth_token)
         os.system(cmd)
-        
+
         # Be nice
         time.sleep(1.0) 
 
