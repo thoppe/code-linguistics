@@ -24,9 +24,17 @@ this is done with `grab_info.py`.
 
 #### Downloading the repo
 
-*IN PROGRESS.*
+The repos do not have to be fully cloned when hosted on github. A zipped tar file can be downloaded using `grab_repo.py`. 
+This grabs the repo files of the default branch with no git information (perfect!).
 
-Need to optimize this step to save time. Need to decide which repos to get (optimal order) and limit by size and language. Can we restrict to only main branch and certain files?
+#### Reducing the repo
+
+**IN PROGRESS**
+
+For each repo, they must be unpacked and filtered. 
+Only files that match those in the [filetypes/extensions.json](filetypes/extensions.json) will be kept.
+Need some kind of central database for this, SQLite might not be enough. [hdf5](http://www.h5py.org/) maybe?
+
 
 ##### Pulling events (not needed?)
 
