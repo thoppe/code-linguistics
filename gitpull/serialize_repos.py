@@ -1,9 +1,9 @@
-import glob, json, sqlite3, os, json, string, hashlib
+import glob, json, sqlite3, os, json, string, hashlib, datetime
 import tempfile, collections, contextlib, itertools
 import glob2 # Recursive globber
-import src.minify_code
-
+import src.minify_code, src.code_db as code_db
 import logging
+
 
 F_REPO = glob2.glob("repos/**/*.gz")
 
@@ -39,7 +39,6 @@ def open_code_file(language, f_code):
         except Exception as ex:
             msg = "Function {} failed for {}, skipping"
             vals = func,f_code
-            exit()
             logging.warning(msg.format(*vals))
             raw = ""
 
@@ -100,8 +99,8 @@ def process_repo(f_repo):
         os.system(cmd_clean)
 
 
-#import multiprocessing
-#P = multiprocessing.Pool()
+import multiprocessing
+P = multiprocessing.Pool()
 
 def serialize(f_repo):
 
@@ -109,18 +108,26 @@ def serialize(f_repo):
 
     with process_repo(f_repo) as tmp_dir:
 
-        ITR = itertools.imap(tokenize, iter_repo(tmp_dir))
-        #ITR = P.imap(tokenize, iter_repo())
+        #ITR = itertools.imap(tokenize, iter_repo(tmp_dir))
+        ITR = P.imap(tokenize, iter_repo(tmp_dir))
 
         for result in ITR:
             yield result
+
+def prep_serialize_for_insert(items):
+    (language, f_code, md5, tokens) = items
+    time = datetime.datetime.now()
+    code_db.get_language_id(language)
+    print f_code, language, time
+
 
 all_tokens = collections.Counter()
 ITR = itertools.imap(serialize, F_REPO)
 
 for f_repo in F_REPO[:5]:
-    for (language, f_code, md5, tokens) in serialize(f_repo):
-        all_tokens.update(tokens)
+    for items in serialize(f_repo):
+        prep_serialize_for_insert(items)
+        #all_tokens.update(tokens)
 
 exit()
 
