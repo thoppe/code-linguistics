@@ -50,21 +50,21 @@ def tokenize((language, f_code)):
     
     word_tokens = string.letters + string.digits + ' _\n'
 
-    raw = open_code_file(language, f_code)
+    code = open_code_file(language, f_code)
+    md5 = hashlib.md5(code).hexdigest()
 
-    md5 = hashlib.md5(raw).hexdigest()
+    filtered = ''.join([x if x in word_tokens 
+                        else ' ' for x in code]).split()
 
     #keep_words = set(keywords[language]["keywords"] +
     #                 keywords[language]["builtins"])
+    #keep_words = set(keywords[language]["keywords"])               
+    #tokens = [x for x in filtered if x in keep_words]
+    tokens = filtered
 
-    keep_words = set(keywords[language]["keywords"])               
-
-    filtered = ''.join([x if x in word_tokens 
-                        else ' ' for x in raw]).split()
-    tokens = [x for x in filtered if x in keep_words]
     counted_tokens = collections.Counter(tokens) 
 
-    return (language, f_code, md5, tokens)
+    return (language, f_code, md5, code, tokens)
 
 
 def iter_repo(folder=None):
@@ -108,26 +108,44 @@ def serialize(f_repo):
 
     with process_repo(f_repo) as tmp_dir:
 
-        #ITR = itertools.imap(tokenize, iter_repo(tmp_dir))
-        ITR = P.imap(tokenize, iter_repo(tmp_dir))
+        ITR = itertools.imap(tokenize, iter_repo(tmp_dir))
+        #ITR = P.imap(tokenize, iter_repo(tmp_dir))
 
         for result in ITR:
             yield result
 
-def prep_serialize_for_insert(items):
-    (language, f_code, md5, tokens) = items
+def insert_into_database(items):
+    # Prep the data for serialization
+    (language, f_code, md5, code, tokens) = items
+
     time = datetime.datetime.now()
-    code_db.get_language_id(language)
-    print f_code, language, time
+    lang_id = code_db.get_language_id(language)
+
+    # don't add a code that already matches the db
+    if code_db.is_new_code(md5):
+
+        project_dir = f_code.split('/')[3]
+        owner = project_dir.split('-')[0]
+        name = '-'.join(project_dir.split('-')[1:-1])
+        project_id = code_db.get_project_id(owner,name)
+        code_db.add_code_item((md5, lang_id, project_id, code, time))
+        code_db.add_tokens(tokens)
 
 
 all_tokens = collections.Counter()
 ITR = itertools.imap(serialize, F_REPO)
 
 for f_repo in F_REPO[:5]:
-    for items in serialize(f_repo):
-        prep_serialize_for_insert(items)
-        #all_tokens.update(tokens)
+
+    _,owner,name = f_repo.split('/')
+    name = name.replace('.tar.gz','')
+
+    if code_db.is_new_project(owner,name):
+        for items in serialize(f_repo):
+            insert_into_database(items)
+
+        code_db.commit()
+
 
 exit()
 

@@ -23,13 +23,15 @@ class grammar_python_clean():
         shebang      = octothorpe + bang
         EOL_comment = (~(shebang) + octothorpe + 
                         pyp.SkipTo(pyp.LineEnd()))
-        EOL_comment.setParseAction(lambda tokens:"\n#")
+        EOL_comment.setParseAction(lambda tokens:"")
 
         self.grammar = quote | EOL_comment
 
 
     def __call__(self, raw):
-        return self.grammar.transformString(raw)
+        cleaned = self.grammar.transformString(raw)
+        # Remove blank lines
+        return '\n'.join([x for x in cleaned.split('\n') if x.strip()])
 
 
 clean_pycode = grammar_python_clean()
