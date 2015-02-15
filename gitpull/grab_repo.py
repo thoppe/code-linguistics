@@ -1,5 +1,5 @@
 import glob, json, sqlite3, os, json, string, hashlib, time
-from API_github import *
+from src.API_github import *
 import tempfile, collections
 
 # Storage for repos
@@ -15,16 +15,20 @@ conn = sqlite3.connect(f_repo_info)
 cursor = conn.execute('SELECT * FROM repo_info LIMIT 1')
 cols = list(map(lambda x: x[0], cursor.description))
 
+# print language stats
+cmd_query_lang = '''
+SELECT language, COUNT(*) FROM repo_info GROUP BY language'''
+#for x in conn.execute(cmd_query_lang):
+#    print x
+
 cmd_select = '''
 SELECT full_name FROM repo_info
-WHERE created_at IS NOT NULL AND size>0'''
+WHERE created_at IS NOT NULL AND size>0
+AND language="Python"
+'''
 
 #git_url = "git://github.com/{}.git"
 #cmd_git = "git clone {url} --branch {branch} --single-branch {folder}"
-
-# Load the extensions
-with open("filetypes/extensions.json") as FIN:
-    extensions = json.load(FIN)
 
 def download_repo_tar(full_name):
 

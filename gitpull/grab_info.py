@@ -1,5 +1,5 @@
 import glob, json, codecs, sqlite3, os, time, json, datetime
-from API_github import *
+from src.API_github import *
 
 # Awesome date library
 import timestring

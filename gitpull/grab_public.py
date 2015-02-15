@@ -1,6 +1,6 @@
 ## Example code, not working yet.
 import requests, json, codecs, ast, glob, os, time
-from API_github import *
+from src.API_github import *
 
 # https://api.github.com/repositories?since=364
 repo_url = "https://api.github.com/repositories"
