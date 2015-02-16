@@ -25,10 +25,10 @@ CREATE TABLE IF NOT EXISTS code (
     local_inserted_at TIMESTAMP
 );
 
-CREATE TABLE IF NOT EXISTS tokens (
-    name STRING PRIMARY KEY,
-    count INTEGER DEFAULT 0
-);
+--CREATE TABLE IF NOT EXISTS tokens (
+--    name STRING PRIMARY KEY,
+--    count INTEGER DEFAULT 0
+--);
 
 '''
 

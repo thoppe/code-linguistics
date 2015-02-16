@@ -1,22 +1,16 @@
-import glob, json, sqlite3, os, json, string, hashlib, datetime
+import glob, json, sqlite3, os, json, string, hashlib, datetime, codecs
 import tempfile, collections, contextlib, itertools
-import glob2 # Recursive globber
 import src.minify_code, src.code_db as code_db
 import logging
+import glob2 # Recursive globber
 
+use_multicore = True
 
 F_REPO = glob2.glob("repos/**/*.gz")
 
 # Load the extensions
 with open("filetypes/extensions.json") as FIN:
     extensions = json.load(FIN)
-
-# Load the keywords
-with open("filetypes/keywords.json") as FIN:
-    keywords = json.load(FIN)
-
-# DEBUG: only use python here
-extensions = {"python":[".py"]}
 
 # Clean functions
 code_cleaners = {
@@ -25,12 +19,13 @@ code_cleaners = {
 code_cleaners = collections.defaultdict(list, code_cleaners)
 
 def open_code_file(language, f_code):
+    # Assume utf-8 code encoding, not perfect but better than ASCII
+
     try:
-        with open(f_code) as FIN: 
-            raw = FIN.read()
+        with codecs.open(f_code, "r", "utf-8") as FIN: 
+            raw = FIN.read().encode('utf-8')
     except:
         raw = ""
-
 
     for func in code_cleaners[language]:
         func(raw)
@@ -46,33 +41,12 @@ def open_code_file(language, f_code):
 
 
 
-def tokenize((language, f_code)):
-    
-    word_tokens = string.letters + string.digits + ' _\n'
-
-    code = open_code_file(language, f_code)
-    md5 = hashlib.md5(code).hexdigest()
-
-    filtered = ''.join([x if x in word_tokens 
-                        else ' ' for x in code]).split()
-
-    #keep_words = set(keywords[language]["keywords"] +
-    #                 keywords[language]["builtins"])
-    #keep_words = set(keywords[language]["keywords"])               
-    #tokens = [x for x in filtered if x in keep_words]
-    tokens = filtered
-
-    counted_tokens = collections.Counter(tokens) 
-
-    return (language, f_code, md5, code, tokens)
-
-
 def iter_repo(folder=None):
     if folder is None:
         folder = os.getcwd()
 
     all_files = glob2.glob("{}/**/*".format(folder))
-    all_files_ext = ['.'+f.split('.')[-1][:10] for f in all_files]
+    all_files_ext = ['.'+f.split('.')[-1][:15] for f in all_files]
 
     for language in extensions:
         for ext in extensions[language]:
@@ -98,25 +72,32 @@ def process_repo(f_repo):
     finally:       
         os.system(cmd_clean)
 
+def serialize((language, f_code)):
+    code = open_code_file(language, f_code)
+    md5 = hashlib.md5(code).hexdigest()
+    return (language, f_code, md5, code)
 
-import multiprocessing
-P = multiprocessing.Pool()
+if use_multicore:    
+    import multiprocessing
+    P = multiprocessing.Pool()
 
-def serialize(f_repo):
+def serialize_file(f_repo):
 
     print "Starting", f_repo
 
     with process_repo(f_repo) as tmp_dir:
 
-        ITR = itertools.imap(tokenize, iter_repo(tmp_dir))
-        #ITR = P.imap(tokenize, iter_repo(tmp_dir))
+        if use_multicore:
+            ITR = P.imap(serialize, iter_repo(tmp_dir))
+        else:
+            ITR = itertools.imap(serialize, iter_repo(tmp_dir))
 
         for result in ITR:
             yield result
 
 def insert_into_database(items):
     # Prep the data for serialization
-    (language, f_code, md5, code, tokens) = items
+    (language, f_code, md5, code) = items
 
     time = datetime.datetime.now()
     lang_id = code_db.get_language_id(language)
@@ -128,64 +109,23 @@ def insert_into_database(items):
         owner = project_dir.split('-')[0]
         name = '-'.join(project_dir.split('-')[1:-1])
         project_id = code_db.get_project_id(owner,name)
-        code_db.add_code_item((md5, lang_id, project_id, code, time))
-        code_db.add_tokens(tokens)
+
+        # Convert code to binary object
+        bin_code = sqlite3.Binary(code)
+
+        code_db.add_code_item((md5, lang_id, project_id, bin_code, time))
 
 
-all_tokens = collections.Counter()
-ITR = itertools.imap(serialize, F_REPO)
 
-for f_repo in F_REPO[:5]:
+for f_repo in F_REPO[:50]:
 
     _,owner,name = f_repo.split('/')
     name = name.replace('.tar.gz','')
 
     if code_db.is_new_project(owner,name):
-        for items in serialize(f_repo):
+        for items in serialize_file(f_repo):
             insert_into_database(items)
 
         code_db.commit()
 
-
-exit()
-
-import pylab as plt
-import seaborn as sns
-import numpy as np
-print all_tokens
-Y = sorted(all_tokens.values())[::-1]
-Y = np.array(Y,dtype=float)
-X = np.arange(1,len(Y)+1)
-plt.loglog(X,Y,'o')
-plt.loglog(X,Y)
-
-F1 = (1.0/X)*Y.max()
-F2 = (1.0/X**0.5)*Y.max()
-F3 = (1.0/X**2)*Y.max()
-plt.plot(X,F1,ls='--',label=r"$1/X$")
-plt.plot(X,F2,ls='--',label=r"$1/X^{1/2}$")
-plt.plot(X,F3,ls='--',label=r"$1/X^2$")
-plt.title("Python keywords")
-plt.legend(loc="best")
-
-
-plt.axis('tight')
-plt.show()
-
-        
-        
-
-#for language, f_code in iter_repo(folder):
-#    md5, tokens = tokenize(f_code)
-#    print md5, tokens
-
-
-
-'''
-
-token_words = set(string.letters + string.digits + '_ \n')
-MAX_TOKEN_SIZE = 20
-
-
-'''     
 
