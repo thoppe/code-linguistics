@@ -1,10 +1,7 @@
 {
     "javascript": [
         ".js",
-        ".jse",
-        ".asp",
-        ".hta",
-        ".aspx"
+        ".jse"
     ],
     "java": [
         ".java"

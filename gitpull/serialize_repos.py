@@ -14,8 +14,12 @@ with open("filetypes/extensions.json") as FIN:
 
 # Clean functions
 code_cleaners = {
-    "python" : [src.minify_code.clean_pycode] 
+    "python" : [src.minify_code.clean_py_code],
+    "c" : [src.minify_code.clean_c_code],
+    "cpp" : [src.minify_code.clean_c_code],
+    "javascript" : [src.minify_code.clean_c_code],
 }
+
 code_cleaners = collections.defaultdict(list, code_cleaners)
 
 def open_code_file(language, f_code):
@@ -27,6 +31,8 @@ def open_code_file(language, f_code):
     except:
         raw = ""
 
+    print language, len(raw)
+
     for func in code_cleaners[language]:
         func(raw)
         try:
@@ -36,7 +42,7 @@ def open_code_file(language, f_code):
             vals = func,f_code
             logging.warning(msg.format(*vals))
             raw = ""
-
+    
     return raw
 
 

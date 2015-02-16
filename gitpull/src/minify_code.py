@@ -31,7 +31,7 @@ class grammar_python_clean(generic_code_cleaner):
         EOL_comment.setParseAction(lambda tokens:"")
         self.grammar = quote | EOL_comment
 
-class grammar_c_c_plus_plus_clean(generic_code_cleaner):
+class grammar_c_clean(generic_code_cleaner):
     def __init__(self):
         # Replaces all string (docstrings and quoted strings) with ''
 
@@ -53,8 +53,6 @@ class grammar_c_c_plus_plus_clean(generic_code_cleaner):
         EOL_comment.setParseAction(lambda tokens:"")
         self.grammar = quote | EOL_comment
 
-clean_pycode = grammar_python_clean()
-clean_ccode  = grammar_c_c_plus_plus_clean()
 
 test_py = """
 from time import localtime
@@ -106,9 +104,14 @@ void main()
 } // end of main program
 '''
 
+clean_py_code  = grammar_python_clean()
+clean_c_code   = grammar_c_clean()
+
+# Javascript uses /*...*/ and // ... for comments, we can reuse C-code
+clean_js_code  = grammar_c_clean()
 
 if __name__ == "__main__":
     
-    print clean_pycode(test_py)
-    print clean_ccode(test_cpp)
+    print clean_py_code(test_py)
+    print clean_c_code(test_cpp)
 
