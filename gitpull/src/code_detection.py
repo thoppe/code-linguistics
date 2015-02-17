@@ -9,14 +9,13 @@ def determine_language(f_code):
     output = [x.split(':')[-1].strip().lower() 
               for x in output.split('\n')]
     
-    LOC_line, type_line, mime_line, lang_line,_ = output
-    sloc = LOC_line.split('(')[-1].split(' ')[0]
+    sloc = output[0].split('(')[-1].split(' ')[0]
 
     stats = {
         "source_lines_of_code" : int(sloc),
-        "language": lang_line,
-        "mime"    : mime_line,
-        "type"    : type_line
+        "type"    : output[1],
+        "mime"    : output[2],
+        "language": output[3],
     }
 
     return stats

@@ -12,10 +12,15 @@ F_REPO = glob2.glob("repos/**/*.gz")
 # Load the extensions
 with open("filetypes/extensions.json") as FIN:
     extensions = json.load(FIN)
+extension_lookup = {}
+for lang in extensions:
+    for ex in extensions[lang]:
+        extension_lookup[ex] = lang
 
 code_cleaners = collections.defaultdict(list, mini.code_cleaners)
 
-def open_code_file(language, f_code):
+def open_code_file(f_code):
+    #print "Starting code file ", f_code
 
     # Assume utf-8 code encoding, not perfect but better than ASCII
     try:
@@ -24,27 +29,16 @@ def open_code_file(language, f_code):
     except:
         raw = ""
 
-    data = determine_language(f_code)
+    f_ext = '.{}'.format(f_code.split('.')[-1])
 
-    # if a language is determined use that instead of the one from the extension
-    if not data["language"]:
-        data["language"] = language
+    data = {
+        "language" : extension_lookup[f_ext],
+        "f_code"   : f_code,
+        "code"     : raw,
+        "md5"      : hashlib.md5(raw).hexdigest()
+    }
 
-    for func in code_cleaners[language]:
-        func(raw)
-        try:
-            raw = func(raw)
-        except Exception as ex:
-            msg = "Function {} failed for {}, skipping"
-            vals = func,f_code
-            logging.warning(msg.format(*vals))
-            raw = ""
-
-    data["code"] = raw
-    data["f_code"] = f_code
-    
     return data
-
 
 
 def iter_repo(folder=None):
@@ -52,13 +46,18 @@ def iter_repo(folder=None):
         folder = os.getcwd()
 
     all_files = glob2.glob("{}/**/*".format(folder))
-    all_files_ext = ['.'+f.split('.')[-1][:15] for f in all_files]
+    all_file_data = {}
 
-    for language in extensions:
-        for ext in extensions[language]:
-            for f,f_ext in zip(all_files,all_files_ext):
-                if f_ext == ext:
-                    yield (language, f)
+    # Read in all the raw data first
+    for f_code in all_files:
+        f_ext = '.{}'.format(f_code.split('.')[-1])
+        if f_ext in extension_lookup:
+            all_file_data[f_code] = open_code_file(f_code)
+
+    # Check for any previous md5 matches
+    for data in all_file_data.values():
+        if code_db.is_new_code(data["md5"]):
+            yield data
 
 @contextlib.contextmanager
 def process_repo(f_repo):
@@ -78,21 +77,42 @@ def process_repo(f_repo):
     finally:       
         os.system(cmd_clean)
 
-def serialize((language, f_code)):
-    data = open_code_file(language, f_code)
-    data["md5"] = hashlib.md5(data["code"]).hexdigest()
+def serialize(data):
+    
+    data["is_cleaned"] = False
+    linguist_data = determine_language(data["f_code"])  
+
+    # if a language is determined use it instead of the one from the extension
+    if linguist_data["language"]:
+        data["language"] = linguist_data["language"]
+
+    # Use the source lines of code from linguist
+    data["source_lines_of_code"] = linguist_data["source_lines_of_code"]
+
+    # Try to clean the code and mark if successful
+    raw = data["code"]
+    for func in code_cleaners[data["language"]]:
+        try:
+            raw = func(raw)
+            data["is_cleaned"] = True
+        except Exception as ex:
+            msg = "Function {} failed for {}, skipping"
+            vals = func,f_code
+            logging.warning(msg.format(*vals))
+            raw = ""
+    data["code"] = raw
+
     return data 
 
 if use_multicore:    
     import multiprocessing
     P = multiprocessing.Pool()
 
-def serialize_file(f_repo):
+def serialize_repo(f_repo):
 
     print "Starting", f_repo
-
     with process_repo(f_repo) as tmp_dir:
-
+        
         if use_multicore:
             ITR = P.imap(serialize, iter_repo(tmp_dir))
         else:
@@ -105,10 +125,9 @@ def insert_into_database(data):
 
     time = datetime.datetime.now()
     lang_id = code_db.get_language_id(data["language"])
-    md5 = data["md5"]
 
     # don't add a code that already matches the db
-    if code_db.is_new_code(md5):
+    if code_db.is_new_code(data["md5"]):
 
         project_dir = data["f_code"].split('/')[3]
         owner = project_dir.split('-')[0]
@@ -121,7 +140,9 @@ def insert_into_database(data):
         # LOC is lines of code
         LOC = data["source_lines_of_code"]
 
-        vals = (md5, lang_id, project_id, bin_code, time, LOC)
+        vals = (data["md5"], lang_id, project_id, bin_code, 
+                time, LOC, data["is_cleaned"])
+
         code_db.add_code_item(vals)
 
 
@@ -132,7 +153,7 @@ for f_repo in F_REPO[:50]:
     name = name.replace('.tar.gz','')
 
     if code_db.is_new_project(owner,name):
-        for items in serialize_file(f_repo):
+        for items in serialize_repo(f_repo):
             insert_into_database(items)
 
         code_db.commit()
