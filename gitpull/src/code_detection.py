@@ -4,7 +4,18 @@
 import subprocess
 
 def determine_language(f_code):
-    output = subprocess.check_output(["linguist", f_code])
+    try:
+        output = subprocess.check_output(["linguist", f_code],
+                                         stderr=subprocess.STDOUT,
+                                         )
+    except subprocess.CalledProcessError:
+        # Linguist fails on some malformed files
+        return {
+            "source_lines_of_code" : -1,
+            "type"    : "",
+            "mime"    : "",
+            "language": ""
+        }
 
     output = [x.split(':')[-1].strip().lower() 
               for x in output.split('\n')]

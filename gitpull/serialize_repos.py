@@ -78,7 +78,6 @@ def process_repo(f_repo):
         os.system(cmd_clean)
 
 def serialize(data):
-    
     data["is_cleaned"] = False
     linguist_data = determine_language(data["f_code"])  
 
