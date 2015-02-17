@@ -104,14 +104,21 @@ void main()
 } // end of main program
 '''
 
-clean_py_code  = grammar_python_clean()
-clean_c_code   = grammar_c_clean()
+python_like_clean = grammar_python_clean()
+c_like_clean      = grammar_c_clean()
 
-# Javascript uses /*...*/ and // ... for comments, we can reuse C-code
-clean_js_code  = grammar_c_clean()
+# Java/Javascript uses /*...*/ and // ... for comments, we can reuse C-code
+
+code_cleaners = {
+    "python"       : [python_like_clean],
+    "c"            : [c_like_clean],
+    "c++"          : [c_like_clean],
+    "java"         : [c_like_clean],
+    "javascript"   : [c_like_clean],
+}
 
 if __name__ == "__main__":
     
-    print clean_py_code(test_py)
-    print clean_c_code(test_cpp)
+    print code_cleaners["python"](test_py)
+    print code_cleaners["c++"](test_cpp)
 

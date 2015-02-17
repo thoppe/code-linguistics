@@ -1,6 +1,7 @@
 import glob, json, sqlite3, os, json, string, hashlib, datetime, codecs
 import tempfile, collections, contextlib, itertools
-import src.minify_code, src.code_db as code_db
+import src.minify_code as mini, src.code_db as code_db
+from src.code_detection import determine_language
 import logging
 import glob2 # Recursive globber
 
@@ -12,26 +13,22 @@ F_REPO = glob2.glob("repos/**/*.gz")
 with open("filetypes/extensions.json") as FIN:
     extensions = json.load(FIN)
 
-# Clean functions
-code_cleaners = {
-    "python" : [src.minify_code.clean_py_code],
-    "c" : [src.minify_code.clean_c_code],
-    "cpp" : [src.minify_code.clean_c_code],
-    "javascript" : [src.minify_code.clean_c_code],
-}
-
-code_cleaners = collections.defaultdict(list, code_cleaners)
+code_cleaners = collections.defaultdict(list, mini.code_cleaners)
 
 def open_code_file(language, f_code):
-    # Assume utf-8 code encoding, not perfect but better than ASCII
 
+    # Assume utf-8 code encoding, not perfect but better than ASCII
     try:
         with codecs.open(f_code, "r", "utf-8") as FIN: 
             raw = FIN.read().encode('utf-8')
     except:
         raw = ""
 
-    print language, len(raw)
+    data = determine_language(f_code)
+
+    # if a language is determined use that instead of the one from the extension
+    if not data["language"]:
+        data["language"] = language
 
     for func in code_cleaners[language]:
         func(raw)
@@ -42,8 +39,11 @@ def open_code_file(language, f_code):
             vals = func,f_code
             logging.warning(msg.format(*vals))
             raw = ""
+
+    data["code"] = raw
+    data["f_code"] = f_code
     
-    return raw
+    return data
 
 
 
@@ -79,9 +79,9 @@ def process_repo(f_repo):
         os.system(cmd_clean)
 
 def serialize((language, f_code)):
-    code = open_code_file(language, f_code)
-    md5 = hashlib.md5(code).hexdigest()
-    return (language, f_code, md5, code)
+    data = open_code_file(language, f_code)
+    data["md5"] = hashlib.md5(data["code"]).hexdigest()
+    return data 
 
 if use_multicore:    
     import multiprocessing
@@ -101,25 +101,28 @@ def serialize_file(f_repo):
         for result in ITR:
             yield result
 
-def insert_into_database(items):
-    # Prep the data for serialization
-    (language, f_code, md5, code) = items
+def insert_into_database(data):
 
     time = datetime.datetime.now()
-    lang_id = code_db.get_language_id(language)
+    lang_id = code_db.get_language_id(data["language"])
+    md5 = data["md5"]
 
     # don't add a code that already matches the db
     if code_db.is_new_code(md5):
 
-        project_dir = f_code.split('/')[3]
+        project_dir = data["f_code"].split('/')[3]
         owner = project_dir.split('-')[0]
         name = '-'.join(project_dir.split('-')[1:-1])
         project_id = code_db.get_project_id(owner,name)
 
         # Convert code to binary object
-        bin_code = sqlite3.Binary(code)
+        bin_code = sqlite3.Binary(data["code"])
 
-        code_db.add_code_item((md5, lang_id, project_id, bin_code, time))
+        # LOC is lines of code
+        LOC = data["source_lines_of_code"]
+
+        vals = (md5, lang_id, project_id, bin_code, time, LOC)
+        code_db.add_code_item(vals)
 
 
 

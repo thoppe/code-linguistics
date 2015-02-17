@@ -12,14 +12,14 @@ def determine_language(f_code):
     LOC_line, type_line, mime_line, lang_line,_ = output
     sloc = LOC_line.split('(')[-1].split(' ')[0]
 
-    data = {
+    stats = {
         "source_lines_of_code" : int(sloc),
         "language": lang_line,
         "mime"    : mime_line,
         "type"    : type_line
     }
 
-    return data
+    return stats
 
 
 if __name__ == "__main__":

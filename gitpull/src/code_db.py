@@ -22,6 +22,7 @@ CREATE TABLE IF NOT EXISTS code (
     language_id INT NOT NULL,
     project_id INT,
     text BLOB,
+    LOC  INT,
     local_inserted_at TIMESTAMP
 );
 
@@ -57,6 +58,7 @@ def get_language_id(language):
     except:
         conn.execute(cmd_new, (language,))
         idx = get_language_id(language)
+        print "New language found: ", language
 
     return idx
 
@@ -89,7 +91,7 @@ def add_code_item(items):
     # items = (md5, language_id, project_id, code, time)
     cmd_add = '''
     INSERT INTO code (md5, language_id, project_id, 
-    text, local_inserted_at) VALUES (?,?,?,?,?)'''
+    text, local_inserted_at, LOC) VALUES (?,?,?,?,?,?)'''
     conn.execute(cmd_add, items)
 
 def add_tokens(tokens):
