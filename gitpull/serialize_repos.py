@@ -3,13 +3,9 @@ import tempfile, collections, contextlib, itertools
 import src.code_db as code_db
 import logging
 import glob2 # Recursive globber
+import multiprocessing
 
 use_multicore = True
-F_REPO = glob2.glob("repos/**/*.gz")
-
-if use_multicore:    
-    import multiprocessing
-    P = multiprocessing.Pool()
 
 # Load the extensions
 with open("filetypes/extensions.json") as FIN:
@@ -56,8 +52,7 @@ def iter_repo(folder=None):
 
     # Check for any previous md5 matches
     for data in all_file_data.values():
-        if code_db.is_new_code(data["md5"]):
-            yield data
+        yield data
 
 @contextlib.contextmanager
 def process_repo(f_repo):
@@ -76,23 +71,6 @@ def process_repo(f_repo):
         yield tmp_dir
     finally:       
         os.system(cmd_clean)
-
-def serialize(data):
-    # This used to do more, now it simply passes through
-    return data 
-
-def serialize_repo(f_repo):
-
-    print "Starting", f_repo
-    with process_repo(f_repo) as tmp_dir:
-        
-        if use_multicore:
-            ITR = P.imap(serialize, iter_repo(tmp_dir))
-        else:
-            ITR = itertools.imap(serialize, iter_repo(tmp_dir))
-
-        for result in ITR:
-            yield result
 
 def insert_into_database(data):
 
@@ -115,16 +93,47 @@ def insert_into_database(data):
         code_db.add_code_item(vals)
 
 
+def serialize(data):
+    # This used to do more, now it simply passes through
+    return data 
 
-for f_repo in F_REPO[:50]:
+def serialize_repo(f_repo):
+    data = []
 
-    _,owner,name = f_repo.split('/')
-    name = name.replace('.tar.gz','')
+    with process_repo(f_repo) as tmp_dir:
+        for f_code in iter_repo(tmp_dir):
+            item = serialize(f_code)
+            data.append(item)
 
-    if code_db.is_new_project(owner,name):
-        for items in serialize_repo(f_repo):
-            insert_into_database(items)
+    return data
 
+def unserialized_ITR():
+    F_REPO = glob2.glob("repos/**/*.gz")
+    NEW_REPO = []
+    for f_repo in F_REPO:
+        _,owner,name = f_repo.split('/')
+        name = name.replace('.tar.gz','')
+        if code_db.is_new_project(owner,name):
+            NEW_REPO.append(f_repo)
+    for f_repo in NEW_REPO:
+        print "Starting repo", f_repo
+        yield f_repo
+
+if use_multicore:
+    P = multiprocessing.Pool()
+    ITR = P.imap(serialize_repo, unserialized_ITR())
+else:
+    ITR = itertools.imap(serialize_repo, unserialized_ITR())
+
+for counter, result in enumerate(ITR):
+    #print "Saving {} items".format(len(result))
+    for item in result:
+        insert_into_database(item)
+
+    if counter%10 == 0:
         code_db.commit()
+
+code_db.commit()
+    
 
 

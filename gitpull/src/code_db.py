@@ -3,7 +3,7 @@ import sqlite3, os, collections
 os.system("mkdir -p db")
 
 f_code = "db/code.db"
-conn = sqlite3.connect(f_code)
+conn = sqlite3.connect(f_code,check_same_thread=False)
 
 cmd_template = '''
 CREATE TABLE IF NOT EXISTS languages (
@@ -92,10 +92,14 @@ def get_project_id(owner,name):
 
 def add_code_item(items):
     # items = (md5, language_id, project_id, code, time)
+    md5 = items[0]
+
     cmd_add = '''
     INSERT INTO code (md5, language_id, project_id, 
     text, local_inserted_at) VALUES (?,?,?,?,?)'''
-    conn.execute(cmd_add, items)
+    
+    if is_new_code(md5):
+        conn.execute(cmd_add, items)
 
 def add_tokens(tokens):
     cmd_add = '''UPDATE tokens SET count = count + ? WHERE name = ?'''
