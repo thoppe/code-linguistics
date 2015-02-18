@@ -11,10 +11,11 @@ The hypothesis is that the keywords (when restricted to a single language) will 
 
 ## Roadmap:
 
-+ Get a large sampling of code from github (how do we systematically identify projects on github, is there a list?). See [here](gitpull/) for more information.
-+ Download the dataset and organize into a database.
++ Get a large sampling of code from github. See [here](gitpull/) for more information.
++ Process and filter the dataset. See [here](process_code/) for more information.
 + Determine a list of keywords for all languages we are interested in.
 + Compute the word freq for the data.
++ How to properly determine the best log-fits with optimal parameters?
 + Plot results and interpret.
 + Draft submission for arXiv.
 

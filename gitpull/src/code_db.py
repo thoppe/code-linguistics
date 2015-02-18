@@ -24,8 +24,9 @@ CREATE TABLE IF NOT EXISTS code (
     text BLOB,
     LOC  INT,
     local_inserted_at TIMESTAMP,
-    is_cleaned   BOOL DEFAULT 0,
-    is_tokenized BOOL DEFAULT 0
+    is_identified BOOL DEFAULT 0,
+    is_cleaned    BOOL DEFAULT 0,
+    is_tokenized  BOOL DEFAULT 0
 );
 
 --CREATE TABLE IF NOT EXISTS tokens (
@@ -93,7 +94,7 @@ def add_code_item(items):
     # items = (md5, language_id, project_id, code, time)
     cmd_add = '''
     INSERT INTO code (md5, language_id, project_id, 
-    text, local_inserted_at, LOC, is_cleaned) VALUES (?,?,?,?,?,?,?)'''
+    text, local_inserted_at) VALUES (?,?,?,?,?)'''
     conn.execute(cmd_add, items)
 
 def add_tokens(tokens):

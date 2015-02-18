@@ -27,33 +27,38 @@ this is done with `grab_info.py`.
 The repos do not have to be fully cloned when hosted on github. A zipped tar file can be downloaded using `grab_repo.py`. 
 This grabs the repo files of the default branch with no git information (perfect!).
 
-#### Reducing the repo
+#### Serializing the repos, `serialize_repos.py`
 
-**IN PROGRESS**
-
-For each repo, they must be unpacked and filtered. 
+For each repo, all the files are unpacked to a temporary directory.
 Only files that match those in the [filetypes/extensions.json](filetypes/extensions.json) will be kept.
-Need some kind of central database for this, SQLite might not be enough. [hdf5](http://www.h5py.org/) maybe?
+A database is created `db/code.db` with the following schema:
 
+```sqlite
+CREATE TABLE IF NOT EXISTS code (
+    md5 STRING PRIMARY KEY,
+    language_id INT NOT NULL,
+    project_id INT,
+    text BLOB,
+    LOC  INT,
+    local_inserted_at TIMESTAMP,
+    is_identified BOOL DEFAULT 0,
+    is_cleaned    BOOL DEFAULT 0,
+    is_tokenized  BOOL DEFAULT 0
+);
 
-##### Pulling events (not needed?)
+CREATE TABLE IF NOT EXISTS languages (
+    language_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name STRING
+);
 
-There is a good primer on [pulling from github](https://www.githubarchive.org/).
+CREATE TABLE IF NOT EXISTS projects (
+    project_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    owner STRING,
+    name STRING
+);
+```
 
-In general, it looks like you can get all "events" by grabbing a file like:
+after this, the next step is to [process the data](../process_code/README.md).
 
-    wget http://data.githubarchive.org/2015-01-01-15.json.gz
-
-which is all activity for 1/1/2015 @ 3PM UTC. Or another example,
-
-    wget http://data.githubarchive.org/2015-01-{01..30}-{0..23}.json.gz
-
-which is all of January 2015.
-
-Not all ["events"](https://developer.github.com/v3/activity/events/types/) are needed.
-We need to determine which events are worth saving and parse out the useful information.
-
-We also need to determine what to do with "forks", they shouldn't count extra, otherwise heavily forked projects will be over-counted.
-This is similar in biology to sequence homology.
-
-
+#### Extra Notes
+[Extra Notes](NOTES.md)

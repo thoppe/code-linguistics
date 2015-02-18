@@ -1,13 +1,15 @@
 import glob, json, sqlite3, os, json, string, hashlib, datetime, codecs
 import tempfile, collections, contextlib, itertools
-import src.minify_code as mini, src.code_db as code_db
-from src.code_detection import determine_language
+import src.code_db as code_db
 import logging
 import glob2 # Recursive globber
 
 use_multicore = True
-
 F_REPO = glob2.glob("repos/**/*.gz")
+
+if use_multicore:    
+    import multiprocessing
+    P = multiprocessing.Pool()
 
 # Load the extensions
 with open("filetypes/extensions.json") as FIN:
@@ -16,8 +18,6 @@ extension_lookup = {}
 for lang in extensions:
     for ex in extensions[lang]:
         extension_lookup[ex] = lang
-
-code_cleaners = collections.defaultdict(list, mini.code_cleaners)
 
 def open_code_file(f_code):
     #print "Starting code file ", f_code
@@ -78,34 +78,8 @@ def process_repo(f_repo):
         os.system(cmd_clean)
 
 def serialize(data):
-    data["is_cleaned"] = False
-    linguist_data = determine_language(data["f_code"])  
-
-    # if a language is determined use it instead of the one from the extension
-    if linguist_data["language"]:
-        data["language"] = linguist_data["language"]
-
-    # Use the source lines of code from linguist
-    data["source_lines_of_code"] = linguist_data["source_lines_of_code"]
-
-    # Try to clean the code and mark if successful
-    raw = data["code"]
-    for func in code_cleaners[data["language"]]:
-        try:
-            raw = func(raw)
-            data["is_cleaned"] = True
-        except Exception as ex:
-            msg = "Function {} failed for {}, skipping"
-            vals = func,f_code
-            logging.warning(msg.format(*vals))
-            raw = ""
-    data["code"] = raw
-
+    # This used to do more, now it simply passes through
     return data 
-
-if use_multicore:    
-    import multiprocessing
-    P = multiprocessing.Pool()
 
 def serialize_repo(f_repo):
 
@@ -136,11 +110,7 @@ def insert_into_database(data):
         # Convert code to binary object
         bin_code = sqlite3.Binary(data["code"])
 
-        # LOC is lines of code
-        LOC = data["source_lines_of_code"]
-
-        vals = (data["md5"], lang_id, project_id, bin_code, 
-                time, LOC, data["is_cleaned"])
+        vals = (data["md5"], lang_id, project_id, bin_code, time)
 
         code_db.add_code_item(vals)
 
