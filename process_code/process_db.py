@@ -67,13 +67,13 @@ def identify_chunk(items):
         
         for sloc, lang, md5 in data:
             lang_id = code_db.get_language_id(lang)
-            vals = (sloc,lang,md5)
+            vals = (sloc,lang_id,md5)
             final_data.append(vals)
 
     return final_data
     
 
-chunk_size = 500
+chunk_size = 1000
 src_dir = os.getcwd()
 
 def get_ID_left():
@@ -92,7 +92,6 @@ for items in TODO_ITR("md5, extension, text",
     cmd_update = '''UPDATE code SET LOC=?, language_id=?, 
                     is_identified=1 WHERE md5=?'''
 
-    print len(data), "files identified"
 
     conn.executemany(cmd_update, data)
     conn.commit()
