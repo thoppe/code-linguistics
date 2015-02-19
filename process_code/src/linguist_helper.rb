@@ -2,16 +2,23 @@
 # this _greatly_ speeds up the computation time since the loading
 # of the library is long.
 
+# Takes in the path that you want to scan
+
 require 'linguist/file_blob'
 require 'linguist/language'
-
 require 'json'
 
 include Linguist
 
-ARGV.each do |path|
-  blob = Linguist::FileBlob.new(path, Dir.pwd)
-  #blob.instance_variable_set(:@name, 'script')
+# Only grab the files, not the directories
+glob_path = ARGV[0] + '/**/*'
+FILE_LIST = Dir[glob_path].reject { |p| File.directory? p }
+
+for path in FILE_LIST
+
+  blob = Linguist::FileBlob.new(path)
+
+  # In case a language was not identified
   begin
     language = blob.language.name
   rescue
