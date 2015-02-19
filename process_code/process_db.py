@@ -8,11 +8,15 @@ use_multicore = False
 f_code = 'code.db'
 conn = sqlite3.connect(f_code)
 
+chunk_size = 1000
+src_dir = os.getcwd()
+
 # Create indices for work to be done
 cmd_index = '''
 CREATE INDEX IF NOT EXISTS idx_cleaned ON code (is_cleaned);
 CREATE INDEX IF NOT EXISTS idx_identified ON code (is_identified);
 CREATE INDEX IF NOT EXISTS idx_tokenized ON code (is_tokenized);
+CREATE INDEX IF NOT EXISTS idx_lang_id ON code (language_id);
 '''
 conn.executescript(cmd_index)
 
@@ -72,15 +76,25 @@ def identify_chunk(items):
 
     return final_data
     
-
-chunk_size = 1000
-src_dir = os.getcwd()
-
 def get_ID_left():
     cmd = "SELECT COUNT(*) FROM code WHERE is_identified=0"
     ID_LEFT = conn.execute(cmd)
     return ID_LEFT.next()[0]
 
+def get_tokenize_left(lang_id=None):
+    if lang_id is None:
+        cmd = "SELECT COUNT(*) FROM code WHERE is_tokenized=0"
+    else:
+        cmd = ("SELECT COUNT(*) FROM code WHERE is_tokenized=0 "
+               "AND language_id={idx}")
+
+    cmd = cmd.format(idx=lang_id)
+    ID_LEFT = conn.execute(cmd)
+
+    return ID_LEFT.next()[0]
+
+
+#######################################################################
 
 for items in TODO_ITR("md5, extension, text", 
                       "identified", chunk_size):
@@ -92,6 +106,18 @@ for items in TODO_ITR("md5, extension, text",
     cmd_update = '''UPDATE code SET LOC=?, language_id=?, 
                     is_identified=1 WHERE md5=?'''
 
-
     conn.executemany(cmd_update, data)
     conn.commit()
+
+#######################################################################
+
+from src.clean import code_cleaners
+print "Remaining files to tokenize: ", get_tokenize_left()
+
+for language in code_cleaners:
+    lang_id = code_db.get_language_id(language)
+    print " + remaining", language, get_tokenize_left(lang_id)
+
+
+#for items in TODO_ITR("md5, extension, text", 
+#                      "identified", chunk_size):
