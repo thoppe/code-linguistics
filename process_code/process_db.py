@@ -1,9 +1,12 @@
-import sqlite3, os, contextlib, tempfile
+import src.code_db as code_db
+import sqlite3, os, contextlib, tempfile, subprocess, json
 
 use_multicore = False
 
-f_code = "db/code.db"
-conn = sqlite3.connect(f_code,check_same_thread=False)
+#f_code = "../gitpull/db/code.db"
+#f_code = 'db/code.db'
+f_code = 'code.db'
+conn = sqlite3.connect(f_code)
 
 # Create indices for work to be done
 cmd_index = '''
@@ -34,16 +37,62 @@ def TODO_ITR(select_targets, index_name, block_size=100):
         yield result
         if not result: break
 
-with temp_working_space() as tmp_dir:
-    for items in TODO_ITR("md5, text", "identified",3):
 
-        os.chdir(tmp_dir)
+def get_language_from_linguist(target_dir='.', src_dir=""):
+    d = os.path.join(src_dir, "src/linguist_helper.rb")
+    proc = subprocess.Popen(["ruby",d,target_dir],stdout=subprocess.PIPE)
+    ITEMS = []
 
-        for md5, fbuff in items:
-            print md5
-            with open(md5,'w') as FOUT:
+    for line in iter(proc.stdout.readline, ''):
+        js = json.loads(line)
+        md5 = os.path.basename(js["name"]).split('.')[0]
+        ITEMS.append([js["sloc"], js["language"],md5])
+
+    return ITEMS
+
+
+def identify_chunk(items):
+
+    with temp_working_space() as tmp_dir:
+    
+        for md5, ex, fbuff in items:
+            f = os.path.join(tmp_dir, md5+ex)
+
+            with open(f,'w') as FOUT:
+                
                 FOUT.write(fbuff)
 
-        os.system('bash')
-        exit()
-        print items
+        data = get_language_from_linguist(tmp_dir, src_dir)
+        final_data = []
+        
+        for sloc, lang, md5 in data:
+            lang_id = code_db.get_language_id(lang)
+            vals = (sloc,lang,md5)
+            final_data.append(vals)
+
+    return final_data
+    
+
+chunk_size = 500
+src_dir = os.getcwd()
+
+def get_ID_left():
+    cmd = "SELECT COUNT(*) FROM code WHERE is_identified=0"
+    ID_LEFT = conn.execute(cmd)
+    return ID_LEFT.next()[0]
+
+
+for items in TODO_ITR("md5, extension, text", 
+                      "identified", chunk_size):
+
+    print "Remaining files to ID", get_ID_left()
+
+    data = identify_chunk(items)
+
+    cmd_update = '''UPDATE code SET LOC=?, language_id=?, 
+                    is_identified=1 WHERE md5=?'''
+
+    print len(data), "files identified"
+
+    conn.executemany(cmd_update, data)
+    conn.commit()
