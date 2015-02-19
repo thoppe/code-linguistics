@@ -19,6 +19,7 @@ CREATE TABLE IF NOT EXISTS projects (
 
 CREATE TABLE IF NOT EXISTS code (
     md5 STRING PRIMARY KEY,
+    extension STRING,
     language_id INT NOT NULL,
     project_id INT,
     text BLOB,
@@ -91,12 +92,12 @@ def get_project_id(owner,name):
     return idx
 
 def add_code_item(items):
-    # items = (md5, language_id, project_id, code, time)
+    # items = (md5, language_id, project_id, code, time, extension)
     md5 = items[0]
 
     cmd_add = '''
     INSERT INTO code (md5, language_id, project_id, 
-    text, local_inserted_at) VALUES (?,?,?,?,?)'''
+    text, local_inserted_at, extension) VALUES (?,?,?,?,?,?)'''
     
     if is_new_code(md5):
         conn.execute(cmd_add, items)

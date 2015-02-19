@@ -30,10 +30,10 @@ def open_code_file(f_code):
     data = {
         "language" : extension_lookup[f_ext],
         "f_code"   : f_code,
+        "extension": f_ext,
         "code"     : raw,
         "md5"      : hashlib.md5(raw).hexdigest()
     }
-
     return data
 
 
@@ -88,10 +88,10 @@ def insert_into_database(data):
         # Convert code to binary object
         bin_code = sqlite3.Binary(data["code"])
 
-        vals = (data["md5"], lang_id, project_id, bin_code, time)
+        vals = (data["md5"], lang_id, project_id, 
+                bin_code, time, data["extension"])
 
         code_db.add_code_item(vals)
-
 
 def serialize(data):
     # This used to do more, now it simply passes through
@@ -121,7 +121,7 @@ def unserialized_ITR():
 
 if use_multicore:
     P = multiprocessing.Pool()
-    ITR = P.imap(serialize_repo, unserialized_ITR())
+    ITR = P.imap(serialize_repo, unserialized_ITR(),chunksize=20)
 else:
     ITR = itertools.imap(serialize_repo, unserialized_ITR())
 
@@ -130,9 +130,8 @@ for counter, result in enumerate(ITR):
     for item in result:
         insert_into_database(item)
 
-    if counter%10 == 0:
+    if counter%500 == 0:
         code_db.commit()
-
 code_db.commit()
     
 
