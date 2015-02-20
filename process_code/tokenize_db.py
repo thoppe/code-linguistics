@@ -68,6 +68,6 @@ for language in code_cleaners:
             conn.execute(cmd_mark, (md5,))
 
         conn.commit()
-        code_db.commit()
+        token_conn.commit()
 
         print " + remaining", language, get_tokenize_left(lang_id)
