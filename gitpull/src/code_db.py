@@ -1,6 +1,7 @@
 import sqlite3, os, collections
 
 os.system("mkdir -p db")
+os.system("mkdir -p db_tokens")
 
 f_code = "db/code.db"
 conn = sqlite3.connect(f_code,check_same_thread=False)
@@ -102,7 +103,7 @@ def add_code_item(items):
     if is_new_code(md5):
         conn.execute(cmd_add, items)
 
-def add_tokens(tokens):
+def add_tokens(conn, tokens):
     cmd_add = '''UPDATE tokens SET count = count + ? WHERE name = ?'''
     cmd_new = '''INSERT OR IGNORE INTO tokens (name) VALUES (?)'''
 

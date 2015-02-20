@@ -1,7 +1,10 @@
+import sqlite3, os, tempfile, subprocess
+import json, itertools
 import src.code_db as code_db
-import sqlite3, os, contextlib, tempfile, subprocess, json
+from src.helpers import temp_working_space, sqlite_chunked_itr
 
-use_multicore = False
+#use_multicore = False
+#use_multicore = True
 
 #f_code = "../gitpull/db/code.db"
 #f_code = 'db/code.db'
@@ -19,27 +22,6 @@ CREATE INDEX IF NOT EXISTS idx_tokenized ON code (is_tokenized);
 CREATE INDEX IF NOT EXISTS idx_lang_id ON code (language_id);
 '''
 conn.executescript(cmd_index)
-
-@contextlib.contextmanager
-def temp_working_space():
-    # when used a context manager, yields the tmp_directory
-    tmp_dir = tempfile.mkdtemp()
-    cmd_clean = "rm -rf {}".format(tmp_dir)
-
-    try:
-        yield tmp_dir
-    finally:       
-        os.system(cmd_clean)
-
-
-def TODO_ITR(select_targets, index_name, block_size=100):
-    cmd = 'SELECT {} FROM code WHERE is_{}==0'
-    cmd = cmd.format(select_targets,index_name)
-    cursor = conn.execute(cmd)
-    while True:
-        result = cursor.fetchmany(size=block_size)
-        yield result
-        if not result: break
 
 
 def get_language_from_linguist(target_dir='.', src_dir=""):
@@ -96,8 +78,9 @@ def get_tokenize_left(lang_id=None):
 
 #######################################################################
 
-for items in TODO_ITR("md5, extension, text", 
-                      "identified", chunk_size):
+
+cmd = 'SELECT md5, extension, text FROM code WHERE is_identified==0'
+for items in sqlite_chunked_itr(conn, cmd, 1000):
 
     print "Remaining files to ID", get_ID_left()
 
@@ -109,15 +92,3 @@ for items in TODO_ITR("md5, extension, text",
     conn.executemany(cmd_update, data)
     conn.commit()
 
-#######################################################################
-
-from src.clean import code_cleaners
-print "Remaining files to tokenize: ", get_tokenize_left()
-
-for language in code_cleaners:
-    lang_id = code_db.get_language_id(language)
-    print " + remaining", language, get_tokenize_left(lang_id)
-
-
-#for items in TODO_ITR("md5, extension, text", 
-#                      "identified", chunk_size):

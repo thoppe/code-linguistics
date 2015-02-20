@@ -1,6 +1,11 @@
 # Tmp files
 *~
 *.bak
+\#*\#
+
+# Database files
+*.db
+*.db-journal
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
