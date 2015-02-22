@@ -30,12 +30,6 @@ CREATE TABLE IF NOT EXISTS code (
     is_cleaned    BOOL DEFAULT 0,
     is_tokenized  BOOL DEFAULT 0
 );
-
---CREATE TABLE IF NOT EXISTS tokens (
---    name STRING PRIMARY KEY,
---    count INTEGER DEFAULT 0
---);
-
 '''
 
 conn.executescript(cmd_template)
