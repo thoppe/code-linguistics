@@ -23,9 +23,6 @@ CREATE INDEX IF NOT EXISTS idx_lang_id ON code (language_id);
 '''
 conn.executescript(cmd_index)
 
-
-
-
 def get_language_from_linguist(target_dir='.', src_dir=""):
     d = os.path.join(src_dir, "src/linguist_helper.rb")
     proc = subprocess.Popen(["ruby",d,target_dir],
@@ -99,15 +96,17 @@ P = mp.Pool()
 ITR = P.imap(identify_chunk, read_buffer(1000))
 #ITR = itertools.imap(identify_chunk, read_buffer(100))
 for data in ITR:
+    print "Remaining files to ID", get_ID_left()
 
     final_data = process_language_id(data)
-
-    print "Remaining files to ID", get_ID_left()
 
     cmd_update = '''UPDATE code SET LOC=?, language_id=?, 
                     is_identified=1 WHERE md5=?'''
 
     conn.executemany(cmd_update, final_data)
     conn.commit()
+
+
+
 
 
