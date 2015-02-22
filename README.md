@@ -11,11 +11,10 @@ The hypothesis is that the keywords (when restricted to a single language) will 
 
 ## Roadmap:
 
-+ Get a large sampling of code from github. See [here](gitpull/) for more information.
-+ Process and filter the dataset. See [here](process_code/) for more information.
++ Download a large sampling of code from github. [Completed](gitpull/).
++ Process, filter and tokenize the dataset. [Completed](process_code/).
++ Fit the proper power laws values to the data. [In-progress](fit_tokens/)
 + Determine a list of keywords for all languages we are interested in.
-+ Compute the word freq for the data.
-+ How to properly determine the best log-fits with optimal parameters?
 + Plot results and interpret.
 + Draft submission for arXiv.
 
