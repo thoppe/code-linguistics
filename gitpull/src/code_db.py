@@ -50,7 +50,11 @@ def is_new_code(*vals):
     except:
         return True
 
+_memoized_lang_id = {}
 def get_language_id(language):
+    if language in _memoized_lang_id:
+        return _memoized_lang_id[language]
+
     # Gets the language_id, if a new language adds it to db
     cmd_code_query = '''SELECT language_id FROM 
     languages WHERE name=?'''
@@ -64,6 +68,8 @@ def get_language_id(language):
         conn.execute(cmd_new, (language,))
         idx = get_language_id(language)
         print "New language found: ", language
+
+    _memoized_lang_id[language] = idx
 
     return idx
 
