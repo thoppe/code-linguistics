@@ -8,17 +8,18 @@ from src.helpers import temp_working_space, sqlite_chunked_itr
 #f_code = "../gitpull/db/code.db"
 #f_code = 'db/code.db'
 f_code = 'code.db'
-conn = sqlite3.connect(f_code)
+conn = sqlite3.connect(f_code, check_same_thread=False)
 chunk_size = 30
 
-def get_tokenize_left(lang_id=None):
-    if lang_id is None:
+def get_tokenize_left(language=None):
+
+    if language is None:
         cmd = "SELECT COUNT(*) FROM code WHERE is_tokenized=0"
     else:
+        lang_id = code_db.get_language_id(language)
         cmd = ("SELECT COUNT(*) FROM code WHERE is_tokenized=0 "
-               "AND language_id={idx}")
+               "AND language_id={idx}").format(idx=lang_id)
 
-    cmd = cmd.format(idx=lang_id)
     ID_LEFT = conn.execute(cmd)
 
     return ID_LEFT.next()[0]
@@ -31,10 +32,36 @@ def tokenize(code):
     filtered = [x.lower() for x in filtered.split() if len(x)<15]
     return filtered
 
-#import multiprocessing as mp
-#P = mp.Pool()
+#######################################################################
+
+def read_buffer(language, chunk_size=100):
+    lang_id = code_db.get_language_id(language)
+
+    cmd = '''SELECT md5, text FROM code WHERE 
+             is_tokenized=0 AND language_id={}'''.format(lang_id)
+    QUERY = sqlite_chunked_itr(conn, cmd, chunk_size)
+
+    for chunk in QUERY:
+        decoded_chunk = []
+        for md5,code_buffer in chunk:
+            code = code_buffer[:].decode('utf-8')
+            decoded_chunk.append([md5, code])
+        yield decoded_chunk
 
 #######################################################################
+
+class language_chunk_tokenizer(object):
+    def __init__(self,language):
+        self.language = language
+        self.lang_id  = code_db.get_language_id(language)
+    def __call__(self, chunk):
+        C = collections.Counter()
+        MD5 = []
+        for md5, code in chunk:
+            tokens = tokenize(code_cleaners[language](code))
+            C.update(tokens)
+            MD5.append((md5,))
+        return MD5, C
 
 print "Remaining files to tokenize: ", get_tokenize_left()
 
@@ -46,28 +73,28 @@ CREATE TABLE IF NOT EXISTS tokens (
 '''
 
 for language in code_cleaners:
-    lang_id = code_db.get_language_id(language)
-    print " + remaining", language, get_tokenize_left(lang_id)
+    print " + remaining", language, get_tokenize_left(language)
+
+
+import multiprocessing as mp
+P = mp.Pool()
 
 for language in code_cleaners:
     f_tokens = "db_tokens/{}.db".format(language)
     token_conn = sqlite3.connect(f_tokens)
     token_conn.executescript(cmd_template)
 
-    lang_id = code_db.get_language_id(language)
-    cmd_grab = '''SELECT md5, text FROM code WHERE 
-                  is_tokenized=0 AND language_id={}'''
+    L_func = language_chunk_tokenizer(language)
+    ITEMS  = read_buffer(language, chunk_size=47)
+    ITR = P.imap(L_func, ITEMS)
     cmd_mark = 'UPDATE code SET is_tokenized=1 WHERE md5=?'
 
-    for items in sqlite_chunked_itr(conn, cmd_grab.format(lang_id), 
-                                    chunk_size):
+    for MD5, tokens in ITR:
 
-        for (md5,code,) in items:
-            tokens = tokenize(code_cleaners[language](code))
-            code_db.add_tokens(token_conn, tokens)
-            conn.execute(cmd_mark, (md5,))
+        conn.executemany(cmd_mark, MD5)
+        code_db.add_tokens(token_conn, tokens)
+
+        print " + remaining", language, get_tokenize_left(language)
 
         conn.commit()
         token_conn.commit()
-
-        print " + remaining", language, get_tokenize_left(lang_id)

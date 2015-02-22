@@ -51,20 +51,6 @@ def get_ID_left():
     ID_LEFT = conn.execute(cmd)
     return ID_LEFT.fetchall()[0][0]
 
-'''
-def get_tokenize_left(lang_id=None):
-    if lang_id is None:
-        cmd = "SELECT COUNT(*) FROM code WHERE is_tokenized=0"
-    else:
-        cmd = ("SELECT COUNT(*) FROM code WHERE is_tokenized=0 "
-               "AND language_id={idx}")
-
-    cmd = cmd.format(idx=lang_id)
-    ID_LEFT = conn.execute(cmd)
-
-    return ID_LEFT.next()[0]
-'''
-
 #######################################################################
 
 def read_buffer(chunk_size=100):

@@ -109,20 +109,20 @@ def add_code_item(items):
     if is_new_code(md5):
         conn.execute(cmd_add, items)
 
-def add_tokens(conn, tokens):
+def add_tokens(conn, tokens_counter):
     cmd_add = '''UPDATE tokens SET count = count + ? WHERE name = ?'''
     cmd_new = '''INSERT OR IGNORE INTO tokens (name) VALUES (?)'''
 
-    col = collections.Counter(tokens)
+    assert(type(tokens_counter) is collections.Counter)
 
     def ITR():
-        for name in col.keys():
+        for name in tokens_counter.keys():
             yield (name,)
 
     conn.executemany(cmd_new, ITR())
 
     def ITR():
-        for name,count in col.iteritems():
+        for name,count in tokens_counter.iteritems():
             yield count,name
     conn.executemany(cmd_add, ITR())
 
