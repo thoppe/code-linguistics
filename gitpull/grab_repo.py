@@ -15,6 +15,13 @@ conn = sqlite3.connect(f_repo_info)
 cursor = conn.execute('SELECT * FROM repo_info LIMIT 1')
 cols = list(map(lambda x: x[0], cursor.description))
 
+# Monkey-patch in column local_has_downloaded
+cmd_new_col = '''
+ALTER TABLE repo_info 
+ADD COLUMN local_has_downloaded BOOL DEFAULT 0'''
+if "local_has_downloaded" not in cols:
+    conn.execute(cmd_new_col)
+
 # print language stats
 cmd_query_lang = '''
 SELECT language, COUNT(*) FROM repo_info GROUP BY language'''
@@ -22,15 +29,19 @@ SELECT language, COUNT(*) FROM repo_info GROUP BY language'''
 #    print x
 
 cmd_select = '''
-SELECT full_name FROM repo_info
+SELECT full_name,id FROM repo_info
 WHERE created_at IS NOT NULL AND size>0
-AND language="Python"
+AND local_has_downloaded=0
+AND language="C++"
 '''
+
+cmd_mark_downloaded = '''
+UPDATE repo_info SET local_has_downloaded=1 WHERE id=?;'''
 
 #git_url = "git://github.com/{}.git"
 #cmd_git = "git clone {url} --branch {branch} --single-branch {folder}"
 
-def download_repo_tar(full_name):
+def download_repo_tar(full_name,idx):
 
     user_dir = full_name.split('/')[0]
     os.system("mkdir -p repos/{}".format(user_dir))
@@ -38,18 +49,22 @@ def download_repo_tar(full_name):
     f_out = "repos/{}.tar.gz".format(full_name)
 
     if not os.path.exists(f_out):
+        print "Downloading", full_name
+
         check_limits()
-        print "DOWNLOADING: ", f_out
+
         cmd = cmd_grab.format(full_name=full_name,
                               oauth_token=oauth_token)
         os.system(cmd)
 
+        conn.execute(cmd_mark_downloaded,(idx,))
+
         # Be nice
-        time.sleep(1.0) 
+        time.sleep(0.5)
 
 
-for (full_name,) in conn.execute(cmd_select):
-    download_repo_tar(full_name)
+for (full_name,idx) in conn.execute(cmd_select):
+    download_repo_tar(full_name,idx)
 
 
 
