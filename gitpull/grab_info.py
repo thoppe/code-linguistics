@@ -11,6 +11,9 @@ conn = sqlite3.connect(f_repo_info)
 cursor = conn.execute('SELECT * FROM repo_info LIMIT 1')
 cols = list(map(lambda x: x[0], cursor.description))
 
+# Remove ID from cols, we don't want to change it
+cols.remove("id")
+
 cols_dates = [1 if "_at" in name else 0 for name in cols]
 
 cmd_select = '''
@@ -58,6 +61,8 @@ def info_grab_iter(limit=10):
         h = dict(R.headers)
         js = json.loads(R.text)
 
+        js["local_has_downloaded"] = 1
+
         try:
             vals = [js[key] for key in cols]
 
@@ -68,7 +73,8 @@ def info_grab_iter(limit=10):
             vals += [idx,]
             yield vals
 
-        except:
+        except Exception as Ex:
+
             # For errors, use dummy info
             print json.dumps(js)
             null_date = datetime.datetime(2000,1,1)
@@ -81,7 +87,7 @@ def info_grab_iter(limit=10):
             yield vals
 
         # Be nice
-        time.sleep(0.8)
+        time.sleep(0.25)
 
 def get_items_left():
     return conn.execute(cmd_count_left).next()[0]
@@ -95,8 +101,8 @@ while True:
     print "Item completed/remaining {}/{}".format(*vals)
     if not vals[1]: break
 
-    for info in info_grab_iter(limit=3):
-        conn.execute(cmd_insert, info)
+    for info in info_grab_iter(limit=20):
+         conn.execute(cmd_insert, info)
     conn.commit()
 
 
