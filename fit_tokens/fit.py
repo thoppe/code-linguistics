@@ -2,6 +2,7 @@ import numpy as np
 import sqlite3
 from scipy.optimize import fmin, minimize
 import scipy.special
+import scipy.stats
 import mpmath
 mpmath.dps = 15
 
@@ -13,9 +14,23 @@ conn = sqlite3.connect(f_conn)
 cmd_grab = '''SELECT count FROM tokens'''
 COUNTS = np.array([x for (x,) in conn.execute(cmd_grab)],dtype=float)
 FREQ = COUNTS
-FREQ = np.sort(FREQ)[::-1]
+
+# Account for spurious regularity, e.g. remove correlation between
+# x-y values that could happen by chance by pulling the rank and freq
+# from a binomial distribution
+
+F1 = np.random.binomial(FREQ.astype(np.int64), 0.5)
+F2 = FREQ-F1
+idx  = np.argsort(F2)[::-1]
+FREQ = F1[idx].astype(np.float64)
+
+
+#idx = np.argsort(FREQ)[::-1]
+#FREQ = FREQ[idx].astype(np.float64)
+
 RANK = np.arange(1, len(FREQ)+1)
 
+# Normalize
 total_FREQ = FREQ.sum()
 FREQ /= total_FREQ
 
@@ -46,7 +61,6 @@ class rank_fit_function(object):
         return val
 
     def optimize(self):
-
         self.result = minimize(self.err_func, 
                                self.p0,
                                method="Nelder-Mead")
@@ -116,21 +130,24 @@ class yule_simon(rank_fit_function):
         return val*(dg(r)-dg(r+alpha))
         #return val*(psi(0,r)-psi(0,r+alpha))
 
+def kolmogorov_smirnov_test(X,Y):
+    return np.abs(X-Y).max()
 
 fit = shifted_power_law(FREQ,RANK)
+#fit.p0 = [ 1.42320994,  9.61018191]
+
 #fit = power_law(FREQ,RANK)
 #fit = yule_simon_law(FREQ,RANK)
 #fit = exponential_law(FREQ,RANK)
 #fit = poisson_law(FREQ,RANK)
 
 fit.optimize()
+Y_FIT = fit.fitted_ranked()
+print scipy.stats.ks_2samp(FREQ,Y_FIT)
 
 import pylab as plt
 
-Y_FIT = fit.fitted_ranked()
-print Y_FIT
-plt.loglog(RANK,Y_FIT,lw=3,alpha=.50)
 plt.loglog(RANK,FREQ,'ro',mew=0,alpha=.50)
-
-plt.ylim(FREQ.min(),1)
+plt.loglog(RANK,Y_FIT,lw=3,alpha=.50)
+plt.ylim(FREQ.min(),0.5)
 plt.show()
