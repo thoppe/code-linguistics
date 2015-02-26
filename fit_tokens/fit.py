@@ -6,8 +6,8 @@ import scipy.stats
 import mpmath
 mpmath.dps = 15
 
-language = "javascript"
-#language = "python"
+#language = "javascript"
+language = "python"
 f_conn = "db_tokens/{}.db".format(language)
 conn = sqlite3.connect(f_conn)
 
@@ -24,6 +24,9 @@ F2 = FREQ-F1
 idx  = np.argsort(F2)[::-1]
 FREQ = F1[idx].astype(np.float64)
 
+# Remove those with no remaining frequency
+low_counts = FREQ<1
+FREQ = FREQ[~low_counts]
 
 #idx = np.argsort(FREQ)[::-1]
 #FREQ = FREQ[idx].astype(np.float64)
@@ -133,9 +136,12 @@ class yule_simon(rank_fit_function):
 def kolmogorov_smirnov_test(X,Y):
     return np.abs(X-Y).max()
 
-fit = shifted_power_law(FREQ,RANK)
-#fit.p0 = [ 1.42320994,  9.61018191]
+def r_squared(Y,Y2):
+    SS_tot = (Y-Y.mean())**2
+    SS_res = (Y-Y2)**2
+    return 1 - SS_res.sum()/SS_tot.sum()
 
+fit = shifted_power_law(FREQ,RANK)
 #fit = power_law(FREQ,RANK)
 #fit = yule_simon_law(FREQ,RANK)
 #fit = exponential_law(FREQ,RANK)
@@ -143,11 +149,16 @@ fit = shifted_power_law(FREQ,RANK)
 
 fit.optimize()
 Y_FIT = fit.fitted_ranked()
-print scipy.stats.ks_2samp(FREQ,Y_FIT)
+print "Kolmogorov smirnov: ", scipy.stats.ks_2samp(FREQ,Y_FIT)
+print "R^2 value: ", r_squared(FREQ,Y_FIT)
 
 import pylab as plt
 
 plt.loglog(RANK,FREQ,'ro',mew=0,alpha=.50)
 plt.loglog(RANK,Y_FIT,lw=3,alpha=.50)
 plt.ylim(FREQ.min(),0.5)
+
+#fig = plt.figure()
+#plt.loglog(RANK,(FREQ-Y_FIT)**2, 'ro')
+
 plt.show()
