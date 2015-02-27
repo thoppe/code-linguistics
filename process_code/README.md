@@ -4,6 +4,8 @@
 
 Once the code files have been properly [downloaded and serialized](../gitpull/), each code needs to be correctly tagged with the programming language. For this we use the ruby-gem [linguist](https://github.com/github/linguist), the same one that github uses internally. We pull code files in chunks and apply linguist code detection which also identifies the lines of code. We mark `is_identified` once this has been done.
 
+A report listing the number repos identified can be found [here](stats/language_counts.json).
+
 #### Build the token database, `tokenize_db.py`
 
 For each code file, we [tokenize](http://en.wikipedia.org/wiki/Lexical_analysis#Token) it. To do so, we strip out all comments and strings inside the code. This is a language specific task, and is handled with the code [`src/clean.py`](src/clean.py). Currently we can handle the following languages:
