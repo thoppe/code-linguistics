@@ -10,12 +10,12 @@ conn = sqlite3.connect(f_repo_info)
 # Get the column names
 cursor = conn.execute('SELECT * FROM repo_info LIMIT 1')
 cols = list(map(lambda x: x[0], cursor.description))
-
 # Remove ID from cols, we don't want to change it
 cols.remove("id")
 
 cols_dates = [1 if "_at" in name else 0 for name in cols]
-
+print cols_dates
+exit()
 cmd_select = '''
 SELECT id,full_name FROM repo_info
 WHERE created_at IS NULL AND fork=0

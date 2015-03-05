@@ -14,7 +14,7 @@ ORDER BY COUNT(*) DESC
 data = collections.OrderedDict()
 for language,count in conn.execute(cmd_count):
     data[language] = count
-    sx = "{:20s} {}"
+    sx = "{:25s} {}"
     print sx.format(str(language), count)
 
 f_stats = "stats/repo_language_counts.json"
@@ -39,7 +39,7 @@ ORDER BY COUNT(*) DESC
 data = collections.OrderedDict()
 for language,count in conn.execute(cmd_count):
     data[language] = count
-    sx = "{:20s} {}"
+    sx = "{:25s} {}"
     print sx.format(language, count)
 
 f_stats = "stats/downloaded_language_counts.json"
