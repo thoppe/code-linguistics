@@ -9,6 +9,11 @@ A report listing the number repos that match a given language:
 + [Info statistics](stats/repo_language_counts.json).
 + [Download statistics](stats/downloaded_language_counts.json).
 
+Plots showing various statistics:
++ [Stargazers](stats/plot_star_gazers.png).
++ [Subscribers](stats/plot_subscribers_count.png).
++ [Forks](stats/plot_forks_count.png).
+
 #### Build the token database, `tokenize_db.py`
 
 For each code file, we [tokenize](http://en.wikipedia.org/wiki/Lexical_analysis#Token) it. To do so, we strip out all comments and strings inside the code. This is a language specific task, and is handled with the code [`src/clean.py`](src/clean.py). Currently we can handle the following languages:
