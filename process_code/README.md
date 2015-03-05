@@ -10,7 +10,7 @@ A report listing the number repos that match a given language:
 + [Download statistics](stats/downloaded_language_counts.json).
 
 Plots showing various statistics:
-+ [Stargazers](stats/plot_star_gazers.png).
++ [Stargazers](stats/plot_stargazers_count.png).
 + [Subscribers](stats/plot_subscribers_count.png).
 + [Forks](stats/plot_forks_count.png).
 
