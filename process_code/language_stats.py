@@ -40,7 +40,7 @@ def plot_stat(name):
     f_png = "stats/plot_{}.png".format(name)
     plt.savefig(f_png,bbox_inches="tight")
 
-STAT_NAMES = ["stargazers_count","subscribers_count","forks_count"]
+STAT_NAMES = ["stargazers_count","subscribers_count","forks_count","size"]
 for name in STAT_NAMES:
     plot_stat(name)
 
