@@ -13,6 +13,7 @@ Plots showing various statistics:
 + [Stargazers](stats/plot_stargazers_count.png).
 + [Subscribers](stats/plot_subscribers_count.png).
 + [Forks](stats/plot_forks_count.png).
++ [Size](stats/plot_size.png).
 
 #### Build the token database, `tokenize_db.py`
 
