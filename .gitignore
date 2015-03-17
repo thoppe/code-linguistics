@@ -3,6 +3,11 @@
 *.bak
 \#*\#
 
+# Presentation items
+.render_cache/
+md2reveal/
+reveal.js/
+
 # Database files
 *.db
 *.db-journal
