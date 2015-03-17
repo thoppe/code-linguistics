@@ -8,8 +8,8 @@ _(five minute hack-and-tell version)_
 ====
 
 # Zipf's Law
-!(images/Wikipedia-n-zipf.png)<<height:600px>> remember when I downloaded [wikipedia](https://github.com/thoppe/Colorless-Green-Ideas)?
-
+remember when I downloaded [wikipedia](https://github.com/thoppe/Colorless-Green-Ideas)?
+!(images/Wikipedia-n-zipf.png)<<height:550px>> frequency vs rank order of wikipedia corpus (log scale)
 ====
 ## so I tried to download github...
 

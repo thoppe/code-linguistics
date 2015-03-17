@@ -1,4 +1,4 @@
-title  = "Code-linguistics"
+title  = "code-linguistics"
 author = "Travis Hoppe"
 target = "code_ling_pres.md"
 html_target = "HnC_presentation.html"
