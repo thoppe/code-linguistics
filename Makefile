@@ -1,6 +1,7 @@
 title  = "Code-linguistics"
 author = "Travis Hoppe"
 target = "code_ling_pres.md"
+html_target = "HnC_presentation.html"
 
 python_exec    = python
 md2reveal_exec = md2reveal/md2reveal.py
@@ -8,7 +9,7 @@ md2reveal_exec = md2reveal/md2reveal.py
 args = --html_title $(title) --html_author $(author) 
 
 all:
-	$(python_exec) $(md2reveal_exec) $(target) --output index.html $(args)
+	$(python_exec) $(md2reveal_exec) $(target) --output $(html_target) $(args)
 
 edit:
 	emacs $(target) &
@@ -20,7 +21,7 @@ check:
 	find . -maxdepth 1 -name "*.md" -exec aspell check {} \;
 
 view:
-	chromium-browser index.html
+	chromium-browser $(html_target)
 
 clean:
 	rm -rvf index.html
