@@ -63,17 +63,17 @@
 </section><section class="vertical-stack">
 <section   class="vertical-slide">
 <p>
-<h2>so i tried to download github...</h2><div class="fragment"></p>
-<ul><li>API rate-limit of 5000 requests/hr with OAuth</li>
-<li>Paginated to find ALL public repos <em>(stopping naturally at this one)</em></li>
-<li>ID counter was sequential, 18 million ID's</li>
-<li>About 12 million public non-forked repos...</li>
-<li>Requires an API hit to get info on each one...</li></ul>
+<h2>so I tried to download github...</h2><div class="fragment"></p>
+<ul><li>API rate-limit of 5000 requests/hr with <a href="https://developer.github.com/v3/oauth/">OAuth</a>.</li>
+<li><a href="https://developer.github.com/guides/traversing-with-pagination/">Paginated</a> to find ALL public repos <em>(stopping naturally at this one)</em>.</li>
+<li>ID counter was sequential, 18 million ID's.</li>
+<li>About 12 million public non-forked repos.</li>
+<li>Requires an <a href="https://developer.github.com/v3/repos/">API hit</a> to get info on each one...</li></ul>
 <p>
 </div><div class="fragment"></p>
-<ul><li>Created a (small) army of AWS clones to hit it up</li>
-<li>Stopped when the project cost > 3 lattes (2.5mil)</li>
-<li>github is big and people are amazing...</li></ul>
+<ul><li>Created a (small) army of AWS clones to hit it up.</li>
+<li>Stopped when the project cost > 3 lattes (2.5mil).</li>
+<li>github is <em>big</em> and people are <em>amazing</em>...</li></ul>
 <p>
 </div><div class="fragment"></p>
 <ul><li>Downloaded top 1000 repos</li>
@@ -115,66 +115,62 @@
 <h2>does code follow a power law?</h2></p>
 <br>
 <p>
-no <em>comments</em>, no <em>strings</em>...</p>
+<h4>what is code?</h4>no <em>comments</em>, no <em>strings</em>...<br>only <strong>keywords</strong>, <strong>literals</strong>, <strong>variables</strong> and <strong>constants</strong>.</p>
 <br>
 <p>
-only <strong>keywords</strong>, <strong>literals</strong>, <strong>variables</strong> and <strong>constants</strong>.</p>
-<br>
-<br>
-<p>
-<h1><svg class="latexSVG" height="100%" version="1.2" viewBox="0 0 40.80275 9.984375" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<h4>what is a power law?</h4><h1><svg class="latexSVG" height="100%" version="1.2" viewBox="0 0 40.80275 9.984375" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
  <defs>
   <g>
-   <symbol id="equation_JAPUW_5" overflow="visible">
+   <symbol id="equation_PZOVX_5" overflow="visible">
     <path d="M 3.296875 2.390625 C 3.296875 2.359375 3.296875 2.34375 3.125 2.171875 C 1.890625 0.921875 1.5625 -0.96875 1.5625 -2.5 C 1.5625 -4.234375 1.9375 -5.96875 3.171875 -7.203125 C 3.296875 -7.328125 3.296875 -7.34375 3.296875 -7.375 C 3.296875 -7.453125 3.265625 -7.484375 3.203125 -7.484375 C 3.09375 -7.484375 2.203125 -6.796875 1.609375 -5.53125 C 1.109375 -4.4375 0.984375 -3.328125 0.984375 -2.5 C 0.984375 -1.71875 1.09375 -0.515625 1.640625 0.625 C 2.25 1.84375 3.09375 2.5 3.203125 2.5 C 3.265625 2.5 3.296875 2.46875 3.296875 2.390625 Z M 3.296875 2.390625 " style="stroke:none;"/>
    </symbol>
-   <symbol id="equation_JAPUW_4" overflow="visible">
+   <symbol id="equation_PZOVX_4" overflow="visible">
     <path d="M 4.078125 -2.296875 L 6.859375 -2.296875 C 7 -2.296875 7.1875 -2.296875 7.1875 -2.5 C 7.1875 -2.6875 7 -2.6875 6.859375 -2.6875 L 4.078125 -2.6875 L 4.078125 -5.484375 C 4.078125 -5.625 4.078125 -5.8125 3.875 -5.8125 C 3.671875 -5.8125 3.671875 -5.625 3.671875 -5.484375 L 3.671875 -2.6875 L 0.890625 -2.6875 C 0.75 -2.6875 0.5625 -2.6875 0.5625 -2.5 C 0.5625 -2.296875 0.75 -2.296875 0.890625 -2.296875 L 3.671875 -2.296875 L 3.671875 0.5 C 3.671875 0.640625 3.671875 0.828125 3.875 0.828125 C 4.078125 0.828125 4.078125 0.640625 4.078125 0.5 Z M 4.078125 -2.296875 " style="stroke:none;"/>
    </symbol>
-   <symbol id="equation_JAPUW_6" overflow="visible">
+   <symbol id="equation_PZOVX_6" overflow="visible">
     <path d="M 2.875 -2.5 C 2.875 -3.265625 2.765625 -4.46875 2.21875 -5.609375 C 1.625 -6.828125 0.765625 -7.484375 0.671875 -7.484375 C 0.609375 -7.484375 0.5625 -7.4375 0.5625 -7.375 C 0.5625 -7.34375 0.5625 -7.328125 0.75 -7.140625 C 1.734375 -6.15625 2.296875 -4.578125 2.296875 -2.5 C 2.296875 -0.78125 1.9375 0.96875 0.703125 2.21875 C 0.5625 2.34375 0.5625 2.359375 0.5625 2.390625 C 0.5625 2.453125 0.609375 2.5 0.671875 2.5 C 0.765625 2.5 1.671875 1.8125 2.25 0.546875 C 2.765625 -0.546875 2.875 -1.65625 2.875 -2.5 Z M 2.875 -2.5 " style="stroke:none;"/>
    </symbol>
-   <symbol id="equation_JAPUW_0" overflow="visible">
+   <symbol id="equation_PZOVX_0" overflow="visible">
     <path d="M 0.875 -0.59375 C 0.84375 -0.4375 0.78125 -0.203125 0.78125 -0.15625 C 0.78125 0.015625 0.921875 0.109375 1.078125 0.109375 C 1.203125 0.109375 1.375 0.03125 1.453125 -0.171875 C 1.46875 -0.203125 1.796875 -1.5625 1.84375 -1.75 C 1.921875 -2.078125 2.109375 -2.765625 2.15625 -3.046875 C 2.203125 -3.171875 2.484375 -3.640625 2.71875 -3.859375 C 2.796875 -3.921875 3.09375 -4.1875 3.515625 -4.1875 C 3.78125 -4.1875 3.921875 -4.0625 3.9375 -4.0625 C 3.640625 -4.015625 3.421875 -3.78125 3.421875 -3.515625 C 3.421875 -3.359375 3.53125 -3.171875 3.796875 -3.171875 C 4.0625 -3.171875 4.34375 -3.40625 4.34375 -3.765625 C 4.34375 -4.109375 4.03125 -4.40625 3.515625 -4.40625 C 2.875 -4.40625 2.4375 -3.921875 2.25 -3.640625 C 2.15625 -4.09375 1.796875 -4.40625 1.328125 -4.40625 C 0.875 -4.40625 0.6875 -4.015625 0.59375 -3.84375 C 0.421875 -3.5 0.296875 -2.90625 0.296875 -2.875 C 0.296875 -2.765625 0.390625 -2.765625 0.40625 -2.765625 C 0.515625 -2.765625 0.515625 -2.78125 0.578125 -3 C 0.75 -3.703125 0.953125 -4.1875 1.3125 -4.1875 C 1.46875 -4.1875 1.609375 -4.109375 1.609375 -3.734375 C 1.609375 -3.515625 1.578125 -3.40625 1.453125 -2.890625 Z M 0.875 -0.59375 " style="stroke:none;"/>
    </symbol>
-   <symbol id="equation_JAPUW_1" overflow="visible">
+   <symbol id="equation_PZOVX_1" overflow="visible">
     <path d="M 5.734375 -5.671875 C 5.734375 -6.421875 5.1875 -7.03125 4.375 -7.03125 C 3.796875 -7.03125 3.515625 -6.875 3.171875 -6.625 C 2.625 -6.21875 2.078125 -5.25 1.890625 -4.5 L 0.296875 1.828125 C 0.296875 1.875 0.34375 1.9375 0.421875 1.9375 C 0.5 1.9375 0.53125 1.90625 0.53125 1.890625 L 1.234375 -0.875 C 1.421875 -0.265625 1.859375 0.09375 2.59375 0.09375 C 3.3125 0.09375 4.0625 -0.25 4.515625 -0.6875 C 5 -1.140625 5.3125 -1.78125 5.3125 -2.515625 C 5.3125 -3.234375 4.9375 -3.765625 4.578125 -4 C 5.15625 -4.34375 5.734375 -4.953125 5.734375 -5.671875 Z M 3.9375 -4.015625 C 3.8125 -3.96875 3.703125 -3.953125 3.453125 -3.953125 C 3.3125 -3.953125 3.125 -3.9375 3.015625 -3.984375 C 3.046875 -4.09375 3.40625 -4.0625 3.515625 -4.0625 C 3.71875 -4.0625 3.8125 -4.0625 3.9375 -4.015625 Z M 5.171875 -5.90625 C 5.171875 -5.203125 4.796875 -4.484375 4.28125 -4.171875 C 4 -4.28125 3.8125 -4.296875 3.515625 -4.296875 C 3.296875 -4.296875 2.734375 -4.3125 2.734375 -3.984375 C 2.734375 -3.703125 3.25 -3.734375 3.421875 -3.734375 C 3.796875 -3.734375 3.953125 -3.734375 4.25 -3.859375 C 4.625 -3.5 4.671875 -3.1875 4.6875 -2.734375 C 4.703125 -2.15625 4.46875 -1.40625 4.1875 -1.015625 C 3.796875 -0.484375 3.125 -0.125 2.5625 -0.125 C 1.796875 -0.125 1.421875 -0.703125 1.421875 -1.40625 C 1.421875 -1.5 1.421875 -1.65625 1.46875 -1.84375 L 2.109375 -4.359375 C 2.328125 -5.21875 3.046875 -6.8125 4.25 -6.8125 C 4.828125 -6.8125 5.171875 -6.5 5.171875 -5.90625 Z M 5.171875 -5.90625 " style="stroke:none;"/>
    </symbol>
-   <symbol id="equation_JAPUW_2" overflow="visible">
+   <symbol id="equation_PZOVX_2" overflow="visible">
     <path d="M 5.1875 -1.578125 C 5.296875 -1.578125 5.46875 -1.578125 5.46875 -1.734375 C 5.46875 -1.921875 5.296875 -1.921875 5.1875 -1.921875 L 1.03125 -1.921875 C 0.921875 -1.921875 0.75 -1.921875 0.75 -1.75 C 0.75 -1.578125 0.90625 -1.578125 1.03125 -1.578125 Z M 5.1875 -1.578125 " style="stroke:none;"/>
    </symbol>
-   <symbol id="equation_JAPUW_3" overflow="visible">
+   <symbol id="equation_PZOVX_3" overflow="visible">
     <path d="M 3.8125 -0.984375 C 4.453125 -1.640625 4.703125 -2.578125 4.703125 -2.640625 C 4.703125 -2.734375 4.625 -2.734375 4.59375 -2.734375 C 4.5 -2.734375 4.5 -2.71875 4.453125 -2.5625 C 4.328125 -2.109375 4.09375 -1.671875 3.796875 -1.296875 C 3.796875 -1.40625 3.78125 -1.875 3.765625 -1.9375 C 3.65625 -2.625 3.140625 -3.078125 2.4375 -3.078125 C 1.421875 -3.078125 0.4375 -2.125 0.4375 -1.140625 C 0.4375 -0.5 0.90625 0.0625 1.703125 0.0625 C 2.34375 0.0625 2.921875 -0.21875 3.3125 -0.515625 C 3.484375 -0.015625 3.828125 0.0625 4.046875 0.0625 C 4.453125 0.0625 4.703125 -0.265625 4.703125 -0.421875 C 4.703125 -0.5 4.609375 -0.5 4.578125 -0.5 C 4.484375 -0.5 4.46875 -0.46875 4.453125 -0.4375 C 4.359375 -0.171875 4.140625 -0.125 4.0625 -0.125 C 3.96875 -0.125 3.84375 -0.125 3.8125 -0.984375 Z M 3.265625 -0.75 C 2.578125 -0.1875 2 -0.125 1.734375 -0.125 C 1.265625 -0.125 1.015625 -0.4375 1.015625 -0.90625 C 1.015625 -1.09375 1.109375 -1.859375 1.46875 -2.34375 C 1.796875 -2.765625 2.1875 -2.875 2.4375 -2.875 C 2.984375 -2.875 3.15625 -2.34375 3.203125 -1.90625 C 3.25 -1.609375 3.234375 -1.109375 3.265625 -0.75 Z M 3.265625 -0.75 " style="stroke:none;"/>
    </symbol>
   </g>
  </defs>
  <g id="surface1">
   <g>
-   <use x="-0.984375" xlink:href="#equation_JAPUW_5" y="7.484375"/>
+   <use x="-0.984375" xlink:href="#equation_PZOVX_5" y="7.484375"/>
   </g>
   <g>
-   <use x="2.889625" xlink:href="#equation_JAPUW_0" y="7.484375"/>
+   <use x="2.889625" xlink:href="#equation_PZOVX_0" y="7.484375"/>
   </g>
   <g>
-   <use x="9.875625" xlink:href="#equation_JAPUW_4" y="7.484375"/>
+   <use x="9.875625" xlink:href="#equation_PZOVX_4" y="7.484375"/>
   </g>
   <g>
-   <use x="19.837625" xlink:href="#equation_JAPUW_1" y="7.484375"/>
+   <use x="19.837625" xlink:href="#equation_PZOVX_1" y="7.484375"/>
   </g>
   <g>
-   <use x="25.998625" xlink:href="#equation_JAPUW_6" y="7.484375"/>
+   <use x="25.998625" xlink:href="#equation_PZOVX_6" y="7.484375"/>
   </g>
   <g>
-   <use x="29.873625" xlink:href="#equation_JAPUW_2" y="3.370375"/>
+   <use x="29.873625" xlink:href="#equation_PZOVX_2" y="3.370375"/>
   </g>
   <g>
-   <use x="36.099625" xlink:href="#equation_JAPUW_3" y="3.370375"/>
+   <use x="36.099625" xlink:href="#equation_PZOVX_3" y="3.370375"/>
   </g>
  </g>
-</svg></h1>maximum likelihood fit to stretched exponential</p>
+</svg></h1><a href="http://en.wikipedia.org/wiki/Maximum_likelihood">maximum likelihood</a> fit to <a href="http://en.wikipedia.org/wiki/Zipf%E2%80%93Mandelbrot_law">generalized exponential</a>.</p>
 </section><section   class="vertical-slide">
 <p>
-<h3>"code" follows a power law!</h3></p>
+<h2>code follows a power law!</h2></p>
 <figure>
     <a href="images/python.png">
     <img class="" src="images/python.png" height="250px">
@@ -195,26 +191,13 @@ only <strong>keywords</strong>, <strong>literals</strong>, <strong>variables</st
     </figure>
 <br>
 <br>
-<pre><code class=python>1726926, u'self'
-647161, 0
-543759, u'def'
-501404, 1
-474704, u'if'
-359567, u'return'
-318063, u'the'
-287194, u'import'
-283680, u'in'
-282158, u'none'
-225461, u'for'
-197735, u'a'
-197623, u'u'
-194436, 2
-190769, u'from'
-161552, u'is'
-155933, u'not'
-140324, u'name'
-138828, u'and'
-136889, u'x'</code></pre>
+<p>
+Top 20 "words" from Python code:</p>
+<pre><code class=python>1726926, self       647161, 0            543759, def      501404, 1
+474704, if          359567, return       318063, the      287194, import
+283680, in          282158, none         225461, for      197735, a
+197623, a           194436, 2            190769, from     161552, is
+155933, not         140324, name         138828, and      136889, x</code></pre>
 </section><section   class="vertical-slide">
 <p>
 <h3><strong>keywords</strong> only? Not a power law!</h3></p>
@@ -239,16 +222,30 @@ finally        6930    global         6523    exec           1881</code></pre>
 <p>
 <h1>Consequences & quick thoughts</h1></p>
 <br>
-<ul><li>"computational linguistics" -> "linguistics of computation"</li>
+<ul><li>"computational linguistics" <svg class="latexSVG" height="100%" version="1.2" viewBox="0 0 8.859375 5.203125" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+ <defs>
+  <g>
+   <symbol id="equation_IQHAO_0" overflow="visible">
+    <path d="M 8.3125 -2.296875 C 7.765625 -1.875 7.5 -1.46875 7.421875 -1.328125 C 6.96875 -0.640625 6.890625 -0.015625 6.890625 -0.015625 C 6.890625 0.109375 7.015625 0.109375 7.09375 0.109375 C 7.25 0.109375 7.265625 0.09375 7.3125 -0.09375 C 7.53125 -1.0625 8.125 -1.90625 9.25 -2.359375 C 9.375 -2.40625 9.40625 -2.421875 9.40625 -2.5 C 9.40625 -2.5625 9.34375 -2.59375 9.328125 -2.609375 C 8.875 -2.765625 7.671875 -3.265625 7.296875 -4.9375 C 7.265625 -5.0625 7.25 -5.09375 7.09375 -5.09375 C 7.015625 -5.09375 6.890625 -5.09375 6.890625 -4.96875 C 6.890625 -4.953125 6.984375 -4.328125 7.390625 -3.65625 C 7.59375 -3.359375 7.890625 -3.015625 8.3125 -2.6875 L 0.90625 -2.6875 C 0.734375 -2.6875 0.546875 -2.6875 0.546875 -2.5 C 0.546875 -2.296875 0.734375 -2.296875 0.90625 -2.296875 Z M 8.3125 -2.296875 " style="stroke:none;"/>
+   </symbol>
+  </g>
+ </defs>
+ <g id="surface1">
+  <g>
+   <use x="-0.546875" xlink:href="#equation_IQHAO_0" y="5.09375"/>
+  </g>
+ </g>
+</svg> "linguistics of computation"</li>
 <li>Investigate bigrams, trigrams of keywords?</li>
 <li>Language design, keyword choice?</li>
+<li>Difference in smaller projects?</li>
 <li>coder "fingerprints"?</li></ul>
 </section><section   class="vertical-slide">
 <p>
 <h1>Thanks you!</h1></p>
 <br>
 <p>
-<div style="footnote"><br>Looking for an overpowered scientist turned analyst/developer? Let's talk!<br><strong>travis.hoppe@gmail.com</strong><br></div></p>
+<div style="footnote"><br>Looking for an overpowered scientist turned analyst/developer? Let's talk!<br><strong>travis.hoppe @ gmail.com</strong><br></div></p>
 </section>
 </section>
     </div></div>

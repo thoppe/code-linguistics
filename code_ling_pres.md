@@ -11,18 +11,18 @@ _(five minute hack-and-tell version)_
 !(images/Wikipedia-n-zipf.png)<<height:600px>> remember when I downloaded [wikipedia](https://github.com/thoppe/Colorless-Green-Ideas)?
 
 ====
-## so i tried to download github...
+## so I tried to download github...
 
 ====+
-+ API rate-limit of 5000 requests/hr with OAuth
-+ Paginated to find ALL public repos _(stopping naturally at this one)_
-+ ID counter was sequential, 18 million ID's
-+ About 12 million public non-forked repos...
-+ Requires an API hit to get info on each one...
++ API rate-limit of 5000 requests/hr with [OAuth](https://developer.github.com/v3/oauth/).
++ [Paginated](https://developer.github.com/guides/traversing-with-pagination/) to find ALL public repos _(stopping naturally at this one)_.
++ ID counter was sequential, 18 million ID's.
++ About 12 million public non-forked repos.
++ Requires an [API hit](https://developer.github.com/v3/repos/) to get info on each one...
 ====+
-+ Created a (small) army of AWS clones to hit it up
-+ Stopped when the project cost > 3 lattes (2.5mil)
-+ github is big and people are amazing...
++ Created a (small) army of AWS clones to hit it up.
++ Stopped when the project cost > 3 lattes (2.5mil).
++ github is _big_ and people are _amazing_...
 ====+
 + Downloaded top 1000 repos
 + for C++, Python, Javascript
@@ -36,40 +36,26 @@ _(five minute hack-and-tell version)_
 ====
 ## does code follow a power law?
 
+#### what is code?
 no _comments_, no _strings_...
-
 only *keywords*, *literals*, *variables* and *constants*.
 
-
+#### what is a power law?
 #$(r+\beta)^{-\alpha}$
-maximum likelihood fit to stretched exponential
+[maximum likelihood](http://en.wikipedia.org/wiki/Maximum_likelihood) fit to [generalized exponential](http://en.wikipedia.org/wiki/Zipf%E2%80%93Mandelbrot_law).
 ====*
-### "code" follows a power law!
+## code follows a power law!
 !(images/python.png)<<height:250px>> python
 !(images/javascript.png)<<height:250px>> javascript
 !(images/c++.png)<<height:250px>> c++
 
 
-    1726926, u'self'
-    647161, 0
-    543759, u'def'
-    501404, 1
-    474704, u'if'
-    359567, u'return'
-    318063, u'the'
-    287194, u'import'
-    283680, u'in'
-    282158, u'none'
-    225461, u'for'
-    197735, u'a'
-    197623, u'u'
-    194436, 2
-    190769, u'from'
-    161552, u'is'
-    155933, u'not'
-    140324, u'name'
-    138828, u'and'
-    136889, u'x'
+Top 20 "words" from Python code:
+    1726926, self       647161, 0            543759, def      501404, 1
+    474704, if          359567, return       318063, the      287194, import
+    283680, in          282158, none         225461, for      197735, a
+    197623, a           194436, 2            190769, from     161552, is
+    155933, not         140324, name         138828, and      136889, x
 ====*
 ### *keywords* only? Not a power law!
 !(images/all_keywords.png)<<height:500px>>
@@ -85,16 +71,17 @@ maximum likelihood fit to stretched exponential
 ====
 # Consequences & quick thoughts
 
-+ "computational linguistics" -> "linguistics of computation"
++ "computational linguistics" $\rightarrow$ "linguistics of computation"
 + Investigate bigrams, trigrams of keywords?
 + Language design, keyword choice?
++ Difference in smaller projects?
 + coder "fingerprints"?
 ====*
 
 # Thanks you!
 
 <div style="footnote">
-Looking for an overpowered scientist turned analyst/developer? Let's talk!<br>*travis.hoppe@gmail.com*
+Looking for an overpowered scientist turned analyst/developer? Let's talk!<br>*travis.hoppe @ gmail.com*
 </div>
 
 
