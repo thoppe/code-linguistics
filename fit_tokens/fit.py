@@ -6,10 +6,20 @@ import scipy.stats
 import mpmath
 mpmath.dps = 15
 
-#language = "javascript"
+language = "javascript"
 language = "python"
+language = "c++"
 f_conn = "db_tokens/{}.db".format(language)
 conn = sqlite3.connect(f_conn)
+
+python_keywords = ['and', 'as', 'assert', 'break', 'class', 'continue', 'def', 'del', 'elif', 'else', 'except', 'exec', 'finally', 'for', 'from', 'global', 'if', 'import', 'in', 'is', 'lambda', 'not', 'or', 'pass', 'print', 'raise', 'return', 'try', 'while', 'with', 'yield']
+
+cmd_top = '''
+SELECT count,name FROM tokens 
+ORDER BY count DESC
+LIMIT 20'''
+for x in conn.execute(cmd_top):
+    print x
 
 cmd_grab = '''SELECT count FROM tokens'''
 COUNTS = np.array([x for (x,) in conn.execute(cmd_grab)],dtype=float)
@@ -89,7 +99,7 @@ class power_law(rank_fit_function):
 class shifted_power_law(rank_fit_function):
     def __init__(self,*args):
         super(shifted_power_law, self).__init__(*args)
-        self.p0 = (1.5,2.0)
+        self.p0 = (1.5,9.0)
     def F(self,r,(alpha,beta)):
         return (r+beta)**(-alpha)
     def ln_F(self,r,(alpha,beta)):
@@ -153,10 +163,17 @@ print "Kolmogorov smirnov: ", scipy.stats.ks_2samp(FREQ,Y_FIT)
 print "R^2 value: ", r_squared(FREQ,Y_FIT)
 
 import pylab as plt
+import seaborn as sns
+
+text = r"$(r+\beta)^{{-\alpha}}$, $\alpha={:0.3f}, \beta={:0.3f}$"
+text = text.format(*fit.px)
 
 plt.loglog(RANK,FREQ,'ro',mew=0,alpha=.50)
-plt.loglog(RANK,Y_FIT,lw=3,alpha=.50)
+plt.loglog(RANK,Y_FIT,lw=3,alpha=.50,label=text)
 plt.ylim(FREQ.min(),0.5)
+plt.legend(fontsize=20)
+plt.axis('tight')
+plt.savefig(language+'.png',bbox_inches=None)
 
 #fig = plt.figure()
 #plt.loglog(RANK,(FREQ-Y_FIT)**2, 'ro')

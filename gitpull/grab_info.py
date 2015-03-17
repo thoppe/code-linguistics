@@ -14,8 +14,7 @@ cols = list(map(lambda x: x[0], cursor.description))
 cols.remove("id")
 
 cols_dates = [1 if "_at" in name else 0 for name in cols]
-print cols_dates
-exit()
+
 cmd_select = '''
 SELECT id,full_name FROM repo_info
 WHERE created_at IS NULL AND fork=0

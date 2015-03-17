@@ -2,10 +2,9 @@ import sqlite3, os, json, collections
 
 os.system("mkdir -p stats")
 
-f_code = 'db/repo_info.db'
+#f_code = 'db/repo_info.db'
+f_code = 'tmp_R.db'
 conn = sqlite3.connect(f_code)
-
-
 
 import pylab as plt
 import seaborn as sns
@@ -40,12 +39,21 @@ def plot_stat(name):
     f_png = "stats/plot_{}.png".format(name)
     plt.savefig(f_png,bbox_inches="tight")
 
-STAT_NAMES = ["stargazers_count","subscribers_count","forks_count","size"]
-for name in STAT_NAMES:
-    plot_stat(name)
+STAT_NAMES = ["stargazers_count","subscribers_count",
+              "forks_count","size"]
+#for name in STAT_NAMES:
+#    plot_stat(name)
 
 #######################################################################
 
+cmd_count = 'SELECT COUNT(*) FROM repo_info'
+print "Total public repos:", conn.execute(cmd_count).next()
+
+cmd_count = '''
+SELECT COUNT(*) FROM repo_info
+WHERE language IS NOT NULL;
+'''
+print "Total public repos info'd:", conn.execute(cmd_count).next()
 
 cmd_count = '''
 SELECT language, COUNT(*) FROM repo_info
@@ -64,6 +72,15 @@ f_stats = "stats/repo_language_counts.json"
 with open(f_stats,'w') as FOUT:
     json.dump(data, FOUT, indent=2)
 
+total = 0
+for key in data:
+    if key is not None:
+        print key, data[key]
+        total += data[key]
+
+print total
+
+exit()
 
 ##########################################################
 

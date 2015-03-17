@@ -5,7 +5,7 @@ import logging
 import glob2 # Recursive globber
 import multiprocessing
 
-use_multicore = True
+use_multicore = False
 
 # Load the extensions
 with open("filetypes/extensions.json") as FIN:
@@ -65,9 +65,8 @@ def process_repo(f_repo):
     cmd_tar = "tar -xf {} -C {}".format(f_full_repo, tmp_dir)
     cmd_clean = "rm -rf {}".format(tmp_dir)
 
-    os.system(cmd_tar)
-
     try:
+        os.system(cmd_tar)
         yield tmp_dir
     finally:       
         os.system(cmd_clean)
@@ -130,7 +129,7 @@ for counter, result in enumerate(ITR):
     for item in result:
         insert_into_database(item)
 
-    if counter%500 == 0:
+    if counter%20 == 0:
         code_db.commit()
 code_db.commit()
     

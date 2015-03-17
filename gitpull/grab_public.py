@@ -1,4 +1,3 @@
-## Example code, not working yet.
 import requests, json, codecs, ast, glob, os, time
 from src.API_github import *
 
