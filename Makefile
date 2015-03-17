@@ -1,6 +1,6 @@
 title  = "Code-linguistics"
 author = "Travis Hoppe"
-target = "Code_Linguistics.md"
+target = "code_ling_pres.md"
 
 python_exec    = python
 md2reveal_exec = md2reveal/md2reveal.py
