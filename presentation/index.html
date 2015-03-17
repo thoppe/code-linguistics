@@ -77,7 +77,8 @@
 <p>
 </div><div class="fragment"></p>
 <ul><li>Downloaded top 1000 repos</li>
-<li>for C++, Python, Javascript</li></ul>
+<li>for C++, Python, Javascript</li>
+<li>serialized by unique md5's</li></ul>
 <p>
 </div></p>
 </section><section   class="vertical-slide">
@@ -111,10 +112,14 @@
 </section><section class="vertical-stack">
 <section   class="vertical-slide">
 <p>
-<h2>does code follow a power law?</h2>no <em>comments</em>, no <em>strings</em>...</p>
+<h2>does code follow a power law?</h2></p>
+<br>
+<p>
+no <em>comments</em>, no <em>strings</em>...</p>
 <br>
 <p>
 only <strong>keywords</strong>, <strong>literals</strong>, <strong>variables</strong> and <strong>constants</strong>.</p>
+<br>
 <br>
 <p>
 <h1><svg class="latexSVG" height="100%" version="1.2" viewBox="0 0 40.80275 9.984375" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
@@ -166,10 +171,10 @@ only <strong>keywords</strong>, <strong>literals</strong>, <strong>variables</st
    <use x="36.099625" xlink:href="#equation_KWJES_3" y="3.370375"/>
   </g>
  </g>
-</svg></h1></p>
+</svg></h1>maximum likelihood fit to stretched exponential</p>
 </section><section   class="vertical-slide">
 <p>
-Yes it does!</p>
+<h3>"code" follows a power law!</h3></p>
 <figure>
     <a href="images/python.png">
     <img class="" src="images/python.png" height="250px">
@@ -210,6 +215,40 @@ Yes it does!</p>
 140324, u'name'
 138828, u'and'
 136889, u'x'</code></pre>
+</section><section   class="vertical-slide">
+<p>
+<h3><strong>keywords</strong> only? Not a power law!</h3></p>
+<figure>
+    <a href="images/all_keywords.png">
+    <img class="" src="images/all_keywords.png" height="500px">
+    </a>
+    
+    </figure>
+<br>
+<pre><code class=python>def          543759    if           474704    return       359567    import       287194
+in           283680    for          225461    from         190769    is           161552
+not          155933    and          138828    class        135388    else         112140
+or            95160    assert        84450    print         76666    try           68039
+raise         63663    except        63357    with          50317    elif          49321
+as            45614    pass          39847    while         17380    lambda        16325
+yield         14846    continue      12991    del           12713    break         11999
+finally        6930    global         6523    exec           1881</code></pre>
+</section>
+</section><section class="vertical-stack">
+<section   class="vertical-slide">
+<p>
+<h1>Consequences & quick thoughts</h1></p>
+<br>
+<ul><li>"computational linguistics" -> "linguistics of computation"</li>
+<li>Investigate bigrams, trigrams of keywords?</li>
+<li>Language design, keyword choice?</li>
+<li>coder "fingerprints"?</li></ul>
+</section><section   class="vertical-slide">
+<p>
+<h1>Thanks you!</h1></p>
+<br>
+<p>
+<div style="footnote"><br>Looking for an overpowered scientist turned analyst/developer? Let's talk!<br><strong>travis.hoppe@gmail.com</strong><br></div></p>
 </section>
 </section>
     </div></div>
