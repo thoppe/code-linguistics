@@ -22,3 +22,8 @@ The hypothesis is that the keywords (when restricted to a single language) will 
 
 + ***[DC Hack and Tell Round 18: Ternary Bits](http://www.meetup.com/DC-Hack-and-Tell/events/220231708/)***, March 17, 2015, [presentation link](http://thoppe.github.io/code-linguistics/HnC_presentation.html).
 
+## References
+  
+  Power-law distributions in empirical data, [arXiv:0706.1062](https://arxiv.org/abs/0706.1062)
+  Similarity of symbol frequency distributions with heavy tails, [arXiv:1510.00277](http://arxiv.org/abs/1510.00277)
+  Power laws in software, [ACM Transactions on Software Engineering and Methodology, Volume 18 Issue 1, September 2008, 2](http://dl.acm.org/citation.cfm?id=1391986)
