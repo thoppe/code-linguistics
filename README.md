@@ -24,6 +24,6 @@ The hypothesis is that the keywords (when restricted to a single language) will 
 
 ## References
   
-  Power-law distributions in empirical data, [arXiv:0706.1062](https://arxiv.org/abs/0706.1062)
-  Similarity of symbol frequency distributions with heavy tails, [arXiv:1510.00277](http://arxiv.org/abs/1510.00277)
-  Power laws in software, [ACM Transactions on Software Engineering and Methodology, Volume 18 Issue 1, September 2008, 2](http://dl.acm.org/citation.cfm?id=1391986)
++  Power-law distributions in empirical data, [arXiv:0706.1062](https://arxiv.org/abs/0706.1062)
++  Similarity of symbol frequency distributions with heavy tails, [arXiv:1510.00277](http://arxiv.org/abs/1510.00277)
++  Power laws in software, [ACM Trans. on Software Engineering and Methodology, Vol 18:1, Sept 2008](http://dl.acm.org/citation.cfm?id=1391986)
